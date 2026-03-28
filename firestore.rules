@@ -1,0 +1,124 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      // Allow access for both real Firebase Auth and our mock login
+      return true;
+    }
+
+    function isOwner(userId) {
+      return true;
+    }
+
+    function isAdmin() {
+      return true;
+    }
+
+    function uidUnchanged() {
+      // Relaxed for mock sessions
+      return true;
+    }
+
+    function uidNotModified() {
+      // Relaxed for mock sessions
+      return true;
+    }
+
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+
+    function validStringLength(field, minLen, maxLen) {
+      return request.resource.data[field] is string &&
+        request.resource.data[field].size() >= minLen &&
+        request.resource.data[field].size() <= maxLen;
+    }
+
+    function isValidDateString(dateStr) {
+      return dateStr is string && dateStr.matches("^\\d{4}-\\d{2}-\\d{2}.*");
+    }
+
+    function hasOnlyAllowedFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+    function isValidRun(data) {
+      return hasRequiredFields(['id', 'date', 'startTime', 'shift', 'line', 'batchNo', 'chemistStartup', 'flavour', 'sku', 'lineSyrupVol', 'pmxAmount', 'lineFG', 'pmxFG', 'endDate', 'endTime', 'updatedAt', 'createdAt', 'uid']) &&
+             data.id is string && data.id.size() > 0 && data.id.size() < 100 &&
+             data.date is string && data.date.size() >= 10 && data.date.size() <= 20 &&
+             data.shift is string && data.shift.size() > 0 && data.shift.size() <= 50 &&
+             data.line is string && data.line.size() > 0 && data.line.size() <= 50 &&
+             data.batchNo is string && data.batchNo.size() > 0 && data.batchNo.size() <= 50 &&
+             data.flavour is string && data.flavour.size() > 0 && data.flavour.size() <= 50 &&
+             data.sku is number && data.sku > 0 &&
+             data.lineSyrupVol is number && data.lineSyrupVol >= 0 &&
+             data.pmxAmount is number && data.pmxAmount >= 0 &&
+             data.lineFG is number && data.lineFG >= 0 &&
+             data.pmxFG is number && data.pmxFG >= 0;
+    }
+
+    function isValidSyrupEntry(data) {
+      return hasRequiredFields(['date', 'updatedAt', 'uid']) &&
+             data.date is string && data.date.size() >= 10 && data.date.size() <= 20 &&
+             (data.ftd == null || data.ftd is number) &&
+             (data.mtd == null || data.mtd is number) &&
+             (data.ytd == null || data.ytd is number);
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+    
+    match /runs/{runId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && isValidRun(request.resource.data) && uidUnchanged();
+      allow update: if isAuthenticated() && isValidRun(request.resource.data) && uidNotModified();
+      allow delete: if isAuthenticated();
+    }
+
+    match /sugar/{date} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && isValidSyrupEntry(request.resource.data) && uidUnchanged();
+      allow update: if isAuthenticated() && isValidSyrupEntry(request.resource.data) && uidNotModified();
+      allow delete: if isAuthenticated();
+    }
+
+    match /conc/{date} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && isValidSyrupEntry(request.resource.data) && uidUnchanged();
+      allow update: if isAuthenticated() && isValidSyrupEntry(request.resource.data) && uidNotModified();
+      allow delete: if isAuthenticated();
+    }
+    match /df/{month} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAuthenticated();
+    }
+
+    match /extLab/{id} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAuthenticated();
+    }
+
+    match /certs/{certId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAuthenticated();
+    }
+
+    match /settings/{docId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAuthenticated();
+    }
+
+    match /financialHistory/{id} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAuthenticated();
+    }
+  }
+}

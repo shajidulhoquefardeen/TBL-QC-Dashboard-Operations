@@ -1,0 +1,103 @@
+{
+  "entities": {
+    "Run": {
+      "title": "Run",
+      "description": "A production run record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "date": { "type": "string" },
+        "startTime": { "type": "string" },
+        "shift": { "type": "string" },
+        "line": { "type": "string" },
+        "batchNo": { "type": "string" },
+        "chemistStartup": { "type": "string" },
+        "chemistEndup": { "type": "string" },
+        "flavour": { "type": "string" },
+        "sku": { "type": "number" },
+        "lineSyrupVol": { "type": "number" },
+        "pmxAmount": { "type": "number" },
+        "lineFG": { "type": "number" },
+        "pmxFG": { "type": "number" },
+        "endDate": { "type": "string" },
+        "endTime": { "type": "string" },
+        "tpc": { "type": ["number", "string"] },
+        "yeast": { "type": ["number", "string"] },
+        "mold": { "type": ["number", "string"] },
+        "coliform": { "type": "string" },
+        "microDate": { "type": "string" },
+        "microResult": { "type": "string" },
+        "deviation": { "type": "string" },
+        "remarks": { "type": "string" },
+        "updatedAt": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "uid": { "type": "string" }
+      },
+      "required": ["id", "date", "startTime", "shift", "line", "batchNo", "chemistStartup", "flavour", "sku", "lineSyrupVol", "pmxAmount", "lineFG", "pmxFG", "endDate", "endTime", "updatedAt", "createdAt", "uid"]
+    },
+    "SyrupEntry": {
+      "title": "SyrupEntry",
+      "description": "A daily syrup yield entry",
+      "type": "object",
+      "properties": {
+        "date": { "type": "string" },
+        "ftd": { "type": ["number", "null"] },
+        "mtd": { "type": ["number", "null"] },
+        "ytd": { "type": ["number", "null"] },
+        "updatedAt": { "type": "string" },
+        "uid": { "type": "string" }
+      },
+      "required": ["date", "updatedAt", "uid"]
+    },
+    "PlantConfig": {
+      "title": "PlantConfig",
+      "description": "Dynamic configuration for the plant (lines, shifts, chemists, etc.)",
+      "type": "object",
+      "properties": {
+        "lines": { "type": "array", "items": { "type": "string" } },
+        "shifts": { "type": "array", "items": { "type": "string" } },
+        "chemists": { "type": "array", "items": { "type": "string" } },
+        "flavours": { "type": "array", "items": { "type": "string" } },
+        "skus": { "type": "array", "items": { "type": "string" } },
+        "deviations": { "type": "array", "items": { "type": "string" } },
+        "updatedAt": { "type": "string" }
+      }
+    },
+    "PlantCertificate": {
+      "title": "PlantCertificate",
+      "description": "A plant certification record with an optional image",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "label": { "type": "string" },
+        "expiry": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "updatedAt": { "type": "string" },
+        "uid": { "type": "string" }
+      },
+      "required": ["id", "label", "expiry", "updatedAt", "uid"]
+    }
+  },
+  "firestore": {
+    "/runs/{runId}": {
+      "schema": { "$ref": "#/entities/Run" },
+      "description": "Stores production runs"
+    },
+    "/sugar/{date}": {
+      "schema": { "$ref": "#/entities/SyrupEntry" },
+      "description": "Stores sugar yield entries"
+    },
+    "/conc/{date}": {
+      "schema": { "$ref": "#/entities/SyrupEntry" },
+      "description": "Stores concentrate yield entries"
+    },
+    "/certs/{certId}": {
+      "schema": { "$ref": "#/entities/PlantCertificate" },
+      "description": "Stores plant certifications"
+    },
+    "/settings/plantConfig": {
+      "schema": { "$ref": "#/entities/PlantConfig" },
+      "description": "Stores dynamic plant configuration"
+    }
+  }
+}

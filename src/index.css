@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;500;600;700;800;900&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Anton&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-condensed: "Barlow Condensed", sans-serif;
+  --font-anton: "Anton", sans-serif;
+
+  --color-navy: #0a1628;
+  --color-navy-mid: #0f1f3d;
+  --color-navy-card: #132244;
+  --color-navy-light: #1a2f5a;
+  --color-border: #1a3060;
+  --color-green: #4caf50;
+  --color-green-l: #66bb6a;
+  --color-teal: #00bcd4;
+  --color-amber: #ffc107;
+  --color-red: #ef5350;
+  --color-text: #dce8ff;
+  --color-text-muted: #6a8fc0;
+  --color-text-dim: #3a5a8a;
+  --color-accent: #00e5ff;
+  --color-pepsi: #1565c0;
+}
+
+body {
+  background-color: var(--color-navy);
+  color: var(--color-text);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 2px; }
+
+/* Table styles */
+.dt { width: 100%; border-collapse: collapse; font-size: 11px; }
+.dt thead th { background: var(--color-navy-light); padding: 7px 9px; text-align: left; font-size: 8px; letter-spacing: 1px; text-transform: uppercase; color: var(--color-text-muted); position: sticky; top: 0; z-index: 5; white-space: nowrap; }
+.dt tbody tr { border-bottom: 1px solid rgba(26,48,96,.4); transition: background .1s; }
+.dt tbody tr:hover { background: rgba(255,255,255,.025); }
+.dt td { padding: 6px 9px; color: var(--color-text); }
+.dt td.d { color: var(--color-text-muted); }
+
+/* Form Inputs */
+.finp { background: var(--color-navy-light); border: 1px solid var(--color-border); border-radius: 4px; padding: 6px 9px; color: var(--color-text); font-size: 12px; font-family: 'IBM Plex Sans', sans-serif; outline: none; transition: border-color .15s; width: 100%; }
+.finp:focus { border-color: var(--color-accent); box-shadow: 0 0 0 2px rgba(0,229,255,.08); }
+.finp option { background: var(--color-navy-mid); }
+
