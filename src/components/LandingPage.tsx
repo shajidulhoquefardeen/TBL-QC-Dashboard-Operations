@@ -223,8 +223,10 @@ export function LandingPage() {
         </div>
         
         <div className="max-w-6xl mx-auto mt-12 pt-8 border-t border-border/30 flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="text-[10px] text-text-dim">
-            © {new Date().getFullYear()} Transcom Beverages Ltd. All rights reserved.
+          <div className="text-[10px] text-text-dim flex flex-col md:flex-row items-center gap-2 md:gap-4">
+            <span>© {new Date().getFullYear()} Transcom Beverages Ltd. All rights reserved.</span>
+            <span className="hidden md:inline text-border/30">|</span>
+            <span className="text-accent/60 font-medium tracking-wide">Developed by Shajidul Hoque</span>
           </div>
           <div className="flex gap-6 text-[10px] text-text-dim uppercase tracking-widest">
             <span className="hover:text-text cursor-pointer">Privacy Policy</span>

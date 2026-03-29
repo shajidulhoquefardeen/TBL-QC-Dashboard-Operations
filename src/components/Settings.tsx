@@ -199,7 +199,7 @@ export function Settings() {
                   <button 
                     onClick={() => {
                       const headers = "id,date,shift,line,batchNo,flavour,sku,chemistStartup,chemistEndup,lineSyrupVol,pmxAmount,lineFG,pmxFG,startTime,endTime,endDate,tpc,yeast,mold,coliform,microDate,microResult,deviation,remarks";
-                      const sample = "run_123,2026-03-29,Day,Line 1,B12345,Pepsi,250,Sajid,Fardeen,1000,500,4000,2000,07:00,15:00,2026-03-29,0,0,0,Absent,2026-03-29,Pass,None,Sample Import";
+                      const sample = "run_123,2026-03-29,Day,Line 1,B12345,Pepsi,250,Shajidul,Hoque,1000,500,4000,2000,07:00,15:00,2026-03-29,0,0,0,Absent,2026-03-29,Pass,None,Sample Import";
                       const blob = new Blob([`${headers}\n${sample}`], { type: 'text/csv' });
                       const url = window.URL.createObjectURL(blob);
                       const a = document.createElement('a');
@@ -264,7 +264,7 @@ export function Settings() {
           <div><strong>Last Updated:</strong> {new Date().toLocaleDateString()}</div>
           <div className="mt-2 pt-2 border-t border-border flex justify-between items-center">
             <span>Developed for Quality Control & Production Monitoring.</span>
-            <span className="text-accent font-semibold tracking-wide">Developed by Sajid Fardeen</span>
+            <span className="text-accent font-semibold tracking-wide">Developed by Shajidul Hoque</span>
           </div>
         </div>
       </div>
