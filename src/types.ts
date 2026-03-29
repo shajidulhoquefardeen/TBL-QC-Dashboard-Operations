@@ -168,3 +168,14 @@ export interface LandingPageConfig {
   missionTextSecondary?: string;
   updatedAt: string;
 }
+
+export interface Notice {
+  id: string;
+  title: string;
+  content: string;
+  deploymentDate: string; // ISO string
+  deploymentTime: string; // HH:mm
+  updatedAt: string;
+  createdAt: string;
+  uid?: string;
+}

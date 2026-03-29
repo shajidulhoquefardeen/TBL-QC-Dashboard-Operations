@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Run, SyrupEntry, PlantMetrics, PlantConfig, PlantCertificate, FinancialHistoryEntry, TeamMember, LegacyMember, ManagerQuote, AchievementCard, LandingPageConfig } from './types';
+import { Run, SyrupEntry, PlantMetrics, PlantConfig, PlantCertificate, FinancialHistoryEntry, TeamMember, LegacyMember, ManagerQuote, AchievementCard, LandingPageConfig, Notice } from './types';
 import { CHEMISTS, F15, LINES, FLAVOURS } from './constants';
 import { auth, db } from './firebase';
 import { onAuthStateChanged, signInAnonymously, signOut, User } from 'firebase/auth';
@@ -23,6 +23,7 @@ interface AppState {
   managerQuotes: ManagerQuote[];
   achievementCards: AchievementCard[];
   landingConfig: LandingPageConfig | null;
+  notices: Notice[];
   currentView: string;
   isModalOpen: boolean;
   editId: string | null;
@@ -64,6 +65,8 @@ interface AppContextType extends AppState {
   saveAchievementCard: (card: AchievementCard) => Promise<void>;
   deleteAchievementCard: (id: string) => Promise<void>;
   saveLandingConfig: (config: LandingPageConfig) => Promise<void>;
+  saveNotice: (notice: Notice) => Promise<void>;
+  deleteNotice: (id: string) => Promise<void>;
   showToast: (msg: string, type?: string) => void;
   clearAll: () => Promise<void>;
   loadSampleData: () => Promise<void>;
@@ -94,6 +97,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [managerQuotes, setManagerQuotes] = useState<ManagerQuote[]>([]);
   const [achievementCards, setAchievementCards] = useState<AchievementCard[]>([]);
   const [landingConfig, setLandingConfig] = useState<LandingPageConfig | null>(null);
+  const [notices, setNotices] = useState<Notice[]>([]);
   const [customSettings, setCustomSettings] = useState<any>({ lines: [], flavours: [], chemists: [], skus: [], shifts: [], deviations: [], coliforms: [], microResults: [] });
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [currentView, setCurrentView] = useState('home');
@@ -344,6 +348,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
       (error) => handleFirestoreError(error, OperationType.LIST, 'managerQuotes')
     );
 
+    const unsubNotices = onSnapshot(
+      query(collection(db, 'notices'), orderBy('deploymentDate', 'desc'), orderBy('deploymentTime', 'desc')),
+      (snapshot) => {
+        const n: Notice[] = [];
+        snapshot.forEach((doc) => n.push(doc.data() as Notice));
+        setNotices(n);
+      },
+      (error) => handleFirestoreError(error, OperationType.LIST, 'notices')
+    );
+
     return () => {
       unsubRuns();
       unsubSugar();
@@ -359,6 +373,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       unsubAchievementCards();
       unsubLandingConfig();
       unsubQuotes();
+      unsubNotices();
     };
   }, [isAuthReady, user]);
 
@@ -736,6 +751,29 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const saveNotice = async (notice: Notice) => {
+    if (!user) return;
+    try {
+      await setDoc(doc(db, 'notices', notice.id), { ...notice, uid: user.uid, updatedAt: new Date().toISOString() });
+      showToast('Notice saved successfully');
+    } catch (error) {
+      handleFirestoreError(error, OperationType.WRITE, `notices/${notice.id}`);
+    }
+  };
+
+  const deleteNotice = async (id: string) => {
+    console.log('Attempting to delete notice:', id);
+    if (!user) return;
+    try {
+      await deleteDoc(doc(db, 'notices', id));
+      console.log('Notice deleted successfully');
+      showToast('Notice deleted');
+    } catch (error) {
+      console.error('Error deleting notice:', error);
+      handleFirestoreError(error, OperationType.DELETE, `notices/${id}`);
+    }
+  };
+
   const updateCustomSetting = async (key: string, value: string) => {
     const currentList = customSettings[key] || [];
     if (currentList.includes(value)) return;
@@ -871,14 +909,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
     <AppContext.Provider value={{
       user, role, isAuthReady, theme, setTheme: handleSetTheme,
       runs, sugarData, concData, dfData, extLabData, certsData, financialHistory, plantMetrics, currentView, setCurrentView,
-      teamMembers, legacyMembers, managerQuotes, achievementCards, landingConfig,
+      teamMembers, legacyMembers, managerQuotes, achievementCards, landingConfig, notices,
       sidebarCollapsed, setSidebarCollapsed,
       isModalOpen, openModal, closeModal, editId, prefillLine,
       saveRun, deleteRun, toggleRunLock, saveSugarEntry, deleteSugarEntry,
       saveConcEntry, deleteConcEntry, saveDFEntry, deleteDFEntry,
       saveExtLabEntry, deleteExtLabEntry, saveCert, deleteCert, saveFinancialHistory, deleteFinancialHistory, savePlantMetrics, savePlantConfig, 
       saveTeamMember, deleteTeamMember, saveLegacyMember, deleteLegacyMember, saveManagerQuote,
-      saveAchievementCard, deleteAchievementCard, saveLandingConfig,
+      saveAchievementCard, deleteAchievementCard, saveLandingConfig, saveNotice, deleteNotice,
       toastMsg, toastType, showToast,
       clearAll, loadSampleData, importCSV, signIn, logOut,
       customSettings, updateCustomSetting, removeCustomSetting

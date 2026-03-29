@@ -48,6 +48,7 @@ export function Sidebar() {
       <nav className="flex-1 py-2 overflow-y-auto overflow-x-hidden custom-scrollbar">
         {navSection('General')}
         {navItem('home', '🏠', 'QC Department')}
+        {navItem('notices', '🔔', 'Notice Board')}
 
         {navSection('Dashboards')}
         {navItem('qc', '📊', 'QC Dashboard')}

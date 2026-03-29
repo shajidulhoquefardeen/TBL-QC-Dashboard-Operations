@@ -16,6 +16,7 @@ import { DataEntry } from './components/DataEntry';
 import { Certs } from './components/Certs';
 import { Settings } from './components/Settings';
 import { LandingPage } from './components/LandingPage';
+import NoticeBoard from './components/NoticeBoard';
 import { useAppContext } from './store';
 import { DataEntryModal } from './components/DataEntryModal';
 import { ErrorBoundary } from './components/ErrorBoundary';
@@ -92,6 +93,7 @@ function AppContent() {
         <Topbar />
         <main className="flex-1 overflow-y-auto relative">
           {currentView === 'home' && <LandingPage />}
+          {currentView === 'notices' && <NoticeBoard />}
           {currentView === 'qc' && <QCDashboard />}
           {currentView === 'yield' && <YieldDashboard />}
           {currentView === 'lineboard' && <LineBoard />}

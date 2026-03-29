@@ -119,6 +119,22 @@
         "uid": { "type": "string" }
       },
       "required": ["id", "name", "quote", "updatedAt", "uid"]
+    },
+    "Notice": {
+      "title": "Notice",
+      "description": "A notice for the QC department",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "deploymentDate": { "type": "string" },
+        "deploymentTime": { "type": "string" },
+        "updatedAt": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "uid": { "type": "string" }
+      },
+      "required": ["id", "title", "content", "deploymentDate", "deploymentTime", "updatedAt", "createdAt", "uid"]
     }
   },
   "firestore": {
@@ -153,6 +169,10 @@
     "/managerQuotes/{quoteId}": {
       "schema": { "$ref": "#/entities/ManagerQuote" },
       "description": "Stores manager quotes"
+    },
+    "/notices/{noticeId}": {
+      "schema": { "$ref": "#/entities/Notice" },
+      "description": "Stores notices"
     }
   }
 }

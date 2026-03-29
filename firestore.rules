@@ -97,6 +97,12 @@ service cloud.firestore {
              data.missionTitle is string && data.missionText is string;
     }
 
+    function isValidNotice(data) {
+      return hasRequiredFields(['id', 'title', 'content', 'deploymentDate', 'deploymentTime', 'updatedAt', 'createdAt', 'uid']) &&
+             data.id is string && data.title is string && data.content is string &&
+             data.deploymentDate is string && data.deploymentTime is string;
+    }
+
     // ===============================================================
     // Rules
     // ===============================================================
@@ -173,6 +179,12 @@ service cloud.firestore {
     match /achievementCards/{cardId} {
       allow read: if isAuthenticated();
       allow create, update: if isAuthenticated() && isValidAchievementCard(request.resource.data);
+      allow delete: if isAuthenticated();
+    }
+
+    match /notices/{noticeId} {
+      allow read: if isAuthenticated();
+      allow create, update: if isAuthenticated() && isValidNotice(request.resource.data);
       allow delete: if isAuthenticated();
     }
   }
