@@ -15,7 +15,7 @@
 }
 
 :root.light {
-  --theme-navy: #f8fafc;
+  --theme-navy: #f1f5f9;
   --theme-navy-mid: #ffffff;
   --theme-navy-card: #ffffff;
   --theme-navy-light: #f1f5f9;
@@ -23,8 +23,8 @@
   --theme-text: #0f172a;
   --theme-text-muted: #475569;
   --theme-text-dim: #94a3b8;
-  --theme-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
-  --theme-shadow-hover: 0 20px 35px -5px rgba(0, 0, 0, 0.15), 0 10px 15px -6px rgba(0, 0, 0, 0.1);
+  --theme-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03), 0 0 0 1px rgba(0, 0, 0, 0.02);
+  --theme-shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
 @theme {
