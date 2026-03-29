@@ -156,11 +156,11 @@ export function YieldDashboard() {
 
       <div className="flex flex-col gap-3">
         <div className="grid grid-cols-[260px_260px_1fr] gap-3">
-          <div className="bg-navy-card border border-border rounded-xl p-3 shadow-xl">
+          <div className="bg-navy-card border border-border rounded-xl p-3">
             <div className="text-text-muted font-condensed font-bold text-[10px] tracking-[2px] mb-2 uppercase">FTD Conc. Yield</div>
             <div className="relative h-[140px]"><canvas ref={ftdChartRef}></canvas></div>
           </div>
-          <div className="bg-navy-card border border-border rounded-xl p-3 shadow-xl">
+          <div className="bg-navy-card border border-border rounded-xl p-3">
             <div className="text-text-muted font-condensed font-bold text-[10px] tracking-[2px] mb-2 uppercase">Month Wise Yield</div>
             <div className="relative h-[140px]"><canvas ref={monthlyChartRef}></canvas></div>
           </div>
@@ -175,26 +175,26 @@ export function YieldDashboard() {
         </div>
 
         <div className="grid grid-cols-4 gap-3">
-          <div className="bg-navy-card border border-border rounded-xl p-3 shadow-xl">
+          <div className="bg-navy-card border border-border rounded-xl p-3">
             <div className="text-text-muted font-condensed font-bold text-[10px] tracking-[2px] mb-1 uppercase">Pepsi Yield</div>
             <div className="relative h-[100px]"><canvas ref={pepsiChartRef}></canvas></div>
           </div>
-          <div className="bg-navy-card border border-border rounded-xl p-3 shadow-xl">
+          <div className="bg-navy-card border border-border rounded-xl p-3">
             <div className="text-text-muted font-condensed font-bold text-[10px] tracking-[2px] mb-1 uppercase">7UP EF Yield</div>
             <div className="relative h-[100px]"><canvas ref={upChartRef}></canvas></div>
           </div>
-          <div className="bg-navy-card border border-border rounded-xl p-3 shadow-xl">
+          <div className="bg-navy-card border border-border rounded-xl p-3">
             <div className="text-text-muted font-condensed font-bold text-[10px] tracking-[2px] mb-1 uppercase">Mirinda Yield</div>
             <div className="relative h-[100px]"><canvas ref={mirindaChartRef}></canvas></div>
           </div>
-          <div className="bg-navy-card border border-border rounded-xl p-3 shadow-xl">
+          <div className="bg-navy-card border border-border rounded-xl p-3">
             <div className="text-text-muted font-condensed font-bold text-[10px] tracking-[2px] mb-1 uppercase">Mountain Dew Yield</div>
             <div className="relative h-[100px]"><canvas ref={dewChartRef}></canvas></div>
           </div>
         </div>
 
         <div className="grid grid-cols-[260px_1fr_1fr] gap-3">
-          <div className="bg-navy-card border border-border rounded-xl p-3 shadow-xl overflow-y-auto row-span-2 flex flex-col">
+          <div className="bg-navy-card border border-border rounded-xl p-3 overflow-y-auto row-span-2 flex flex-col">
             <div className="text-text-muted font-condensed font-bold text-[10px] tracking-[2px] mb-2 uppercase">⚠ Needs Attention</div>
             <div className="flex-1 overflow-y-auto">
               {pending.length ? pending.map(r => {
@@ -208,19 +208,19 @@ export function YieldDashboard() {
               }) : <div className="text-green text-[10px] mt-2">✔ All up to date</div>}
             </div>
           </div>
-          <div className="bg-navy-card border border-border rounded-xl p-3 shadow-xl">
+          <div className="bg-navy-card border border-border rounded-xl p-3">
             <div className="text-text-muted font-condensed font-bold text-[10px] tracking-[2px] mb-1 uppercase">Line 4 Yield</div>
             <div className="relative h-[100px]"><canvas ref={l4ChartRef}></canvas></div>
           </div>
-          <div className="bg-navy-card border border-border rounded-xl p-3 shadow-xl">
+          <div className="bg-navy-card border border-border rounded-xl p-3">
             <div className="text-text-muted font-condensed font-bold text-[10px] tracking-[2px] mb-1 uppercase">Line 3 Yield</div>
             <div className="relative h-[100px]"><canvas ref={l3ChartRef}></canvas></div>
           </div>
-          <div className="bg-navy-card border border-border rounded-xl p-3 shadow-xl">
+          <div className="bg-navy-card border border-border rounded-xl p-3">
             <div className="text-text-muted font-condensed font-bold text-[10px] tracking-[2px] mb-1 uppercase">Line 2 Yield</div>
             <div className="relative h-[100px]"><canvas ref={l2ChartRef}></canvas></div>
           </div>
-          <div className="bg-navy-card border border-border rounded-xl p-3 shadow-xl">
+          <div className="bg-navy-card border border-border rounded-xl p-3">
             <div className="text-text-muted font-condensed font-bold text-[10px] tracking-[2px] mb-1 uppercase">Line 1 Yield</div>
             <div className="relative h-[100px]"><canvas ref={l1ChartRef}></canvas></div>
           </div>

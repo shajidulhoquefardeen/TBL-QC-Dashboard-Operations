@@ -151,7 +151,7 @@ export function QCDashboard() {
         {/* Column 1: 3C Scores */}
         <div className="flex flex-col gap-3">
           {/* Capability */}
-          <div className="rounded-xl p-3 shadow-xl relative overflow-hidden group bg-navy-card border border-border">
+          <div className="rounded-xl p-3 relative overflow-hidden group bg-navy-card border border-border">
             <div className="absolute top-0 left-0 w-1 h-full bg-accent"></div>
             <div className="font-condensed font-bold text-[10px] tracking-[2px] mb-3 uppercase flex justify-between items-center text-accent">
               <span>Capability Score</span>
@@ -175,7 +175,7 @@ export function QCDashboard() {
           </div>
 
           {/* Control */}
-          <div className="rounded-xl p-3 shadow-xl relative overflow-hidden group bg-navy-card border border-border">
+          <div className="rounded-xl p-3 relative overflow-hidden group bg-navy-card border border-border">
             <div className="absolute top-0 left-0 w-1 h-full bg-green"></div>
             <div className="font-condensed font-bold text-[10px] tracking-[2px] mb-3 uppercase text-green">Control Score</div>
             <div className="overflow-hidden rounded-lg border border-border">
@@ -209,7 +209,7 @@ export function QCDashboard() {
           </div>
 
           {/* Consumer */}
-          <div className="rounded-xl p-3 shadow-xl relative overflow-hidden group flex-1 flex flex-col bg-navy-card border border-border">
+          <div className="rounded-xl p-3 relative overflow-hidden group flex-1 flex flex-col bg-navy-card border border-border">
             <div className="absolute top-0 left-0 w-1 h-full bg-amber"></div>
             <div className="font-condensed font-bold text-[10px] tracking-[2px] mb-3 uppercase text-amber">Consumer Score</div>
             <div className="overflow-hidden rounded-lg border p-1 flex-1 flex flex-col justify-center border-border">
@@ -248,7 +248,7 @@ export function QCDashboard() {
         {/* Column 2: Yields, DF, AIB */}
         <div className="flex flex-col gap-3">
           {/* Sugar Yields */}
-          <div className="rounded-xl p-3 shadow-xl bg-navy-card border border-border">
+          <div className="rounded-xl p-3 bg-navy-card border border-border">
             <div className="text-[9px] uppercase font-bold tracking-widest mb-2 pb-1 text-text-muted border-b border-border">Sugar Yield Performance</div>
             <div className="grid grid-cols-3 gap-2">
               {[
@@ -271,7 +271,7 @@ export function QCDashboard() {
           </div>
 
           {/* Conc Yields */}
-          <div className="rounded-xl p-3 shadow-xl bg-navy-card border border-border">
+          <div className="rounded-xl p-3 bg-navy-card border border-border">
             <div className="text-[9px] uppercase font-bold tracking-widest mb-2 pb-1 text-teal border-b border-border">Conc. Yield Performance</div>
             <div className="grid grid-cols-3 gap-2">
               {[
@@ -294,7 +294,7 @@ export function QCDashboard() {
           </div>
 
           {/* DF Consumption */}
-          <div className="rounded-xl p-3 shadow-xl bg-navy-card border border-border">
+          <div className="rounded-xl p-3 bg-navy-card border border-border">
             <div className="text-[9px] uppercase font-bold tracking-widest mb-2 flex justify-between items-center text-text-muted">
               <span>DF Consumption</span>
               <span className="text-[7px] font-normal lowercase italic text-text-muted">(monthly kg)</span>
@@ -303,7 +303,7 @@ export function QCDashboard() {
           </div>
 
           {/* AIB & QAS Scores */}
-          <div className="rounded-xl p-3 shadow-xl flex-1 flex flex-col bg-navy-card border border-border">
+          <div className="rounded-xl p-3 flex-1 flex flex-col bg-navy-card border border-border">
             <div className="text-[9px] uppercase font-bold tracking-widest mb-2 pb-1 text-text-muted border-b border-border">🎯 AIB & QAS Performance</div>
             
             {/* AIB Trend Chart */}
@@ -327,7 +327,7 @@ export function QCDashboard() {
         {/* Column 3: Savings, Ext Lab, Environment, BSTI */}
         <div className="flex flex-col gap-3">
           {/* Financial Savings YTD */}
-          <div className="rounded-xl p-3 shadow-xl bg-navy-card border border-border">
+          <div className="rounded-xl p-3 bg-navy-card border border-border">
             <div className="text-[9px] uppercase font-bold tracking-widest mb-2 pb-1 text-text-muted border-b border-border">Financial Savings YTD</div>
             <div className="grid grid-cols-2 gap-2">
               <div className="p-2 rounded-lg border bg-navy-light border-border">
@@ -346,7 +346,7 @@ export function QCDashboard() {
           </div>
 
           {/* External Lab Status */}
-          <div className="rounded-xl p-3 shadow-xl bg-navy-card border border-border">
+          <div className="rounded-xl p-3 bg-navy-card border border-border">
             <div className="text-[9px] uppercase font-bold tracking-widest mb-2 pb-1 flex items-center gap-2 text-text-muted border-b border-border">
               <span>🔬 EXTERNAL LAB STATUS</span>
             </div>
@@ -367,7 +367,7 @@ export function QCDashboard() {
           </div>
 
           {/* Environment (DOE) */}
-          <div className="rounded-xl p-3 shadow-xl bg-navy-card border border-border">
+          <div className="rounded-xl p-3 bg-navy-card border border-border">
             <div className="text-[9px] uppercase font-bold tracking-widest mb-2 pb-1 flex justify-between items-center text-text-muted border-b border-border">
               <span>🌿 ENVIRONMENT (DOE)</span>
             </div>
@@ -396,7 +396,7 @@ export function QCDashboard() {
           </div>
 
           {/* BSTI Certification */}
-          <div className="rounded-xl p-3 shadow-xl flex-1 flex flex-col bg-navy-card border border-border">
+          <div className="rounded-xl p-3 flex-1 flex flex-col bg-navy-card border border-border">
             <div className="text-[9px] uppercase font-bold tracking-widest mb-2 pb-1 text-text-muted border-b border-border">📜 BSTI Certification</div>
             <div className="grid grid-cols-2 gap-2 flex-1">
               {(plantMetrics?.bstiList || []).map((cert, i) => {
