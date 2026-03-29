@@ -113,13 +113,51 @@ export function Settings() {
         )}
       </div>
 
+      <div className="bg-navy-card border border-border rounded-lg p-3.5 mb-4">
+        <div className="font-condensed font-bold text-[13px] tracking-[1.5px] uppercase text-text-muted mb-3.5 pb-2 border-b border-border">🧪 Formula Reference Guide</div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-navy border border-border rounded-lg p-3">
+            <div className="font-condensed font-semibold text-[11px] text-accent uppercase tracking-wider mb-2">Concentrate Yield</div>
+            <div className="text-[10px] font-mono bg-black/20 p-2 rounded border border-border/50 text-teal mb-2">
+              (Actual Syrup / Standard Syrup) × 100
+            </div>
+            <div className="text-[9px] text-text-muted leading-relaxed">
+              Measures the efficiency of concentrate usage during syrup preparation. Target: 100% ± 0.5%
+            </div>
+          </div>
+          
+          <div className="bg-navy border border-border rounded-lg p-3">
+            <div className="font-condensed font-semibold text-[11px] text-amber uppercase tracking-wider mb-2">Sugar Yield</div>
+            <div className="text-[10px] font-mono bg-black/20 p-2 rounded border border-border/50 text-amber mb-2">
+              (Actual Sugar / Standard Sugar) × 100
+            </div>
+            <div className="text-[9px] text-text-muted leading-relaxed">
+              Calculates sugar utilization efficiency against theoretical requirements. Target: 100% ± 0.3%
+            </div>
+          </div>
+
+          <div className="bg-navy border border-border rounded-lg p-3">
+            <div className="font-condensed font-semibold text-[11px] text-green uppercase tracking-wider mb-2">Line Yield</div>
+            <div className="text-[10px] font-mono bg-black/20 p-2 rounded border border-border/50 text-green mb-2">
+              (Actual FG / Standard FG) × 100
+            </div>
+            <div className="text-[9px] text-text-muted leading-relaxed">
+              Overall production efficiency comparing finished goods output to input syrup. Target: &gt; 99.5%
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="bg-navy-card border border-border rounded-lg p-3.5">
         <div className="font-condensed font-bold text-[13px] tracking-[1.5px] uppercase text-text-muted mb-3.5 pb-2 border-b border-border">ℹ️ Application Info</div>
         <div className="text-[10px] text-text-muted flex flex-col gap-2">
           <div><strong>Version:</strong> 1.0.0-production</div>
           <div><strong>Environment:</strong> Cloud Firestore</div>
           <div><strong>Last Updated:</strong> {new Date().toLocaleDateString()}</div>
-          <div className="mt-2 pt-2 border-t border-border">Developed for Quality Control & Production Monitoring.</div>
+          <div className="mt-2 pt-2 border-t border-border flex justify-between items-center">
+            <span>Developed for Quality Control & Production Monitoring.</span>
+            <span className="text-accent font-semibold tracking-wide">Developed by Sajid Fardeen</span>
+          </div>
         </div>
       </div>
     </div>
