@@ -80,10 +80,6 @@ function AppContent() {
             >
               {loading ? 'Logging in...' : 'Log In'}
             </button>
-            <div className="mt-4 text-[10px] text-center" style={{ color: '#3a5a8a' }}>
-              Admin: admin / 1234 <br/>
-              Chemist: chemist / chemist123
-            </div>
           </form>
         </div>
       </div>

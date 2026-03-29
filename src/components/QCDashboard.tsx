@@ -372,20 +372,26 @@ export function QCDashboard() {
             <div className="text-[9px] uppercase font-bold tracking-widest mb-2 pb-1 flex justify-between items-center" style={{ color: '#6a8fc0', borderBottom: '1px solid rgba(26, 48, 96, 1)' }}>
               <span>🌿 ENVIRONMENT (DOE)</span>
             </div>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 gap-2 mb-2">
               <div className="p-2 rounded-lg border text-center" style={{ backgroundColor: 'rgba(26, 47, 90, 0.3)', borderColor: 'rgba(26, 48, 96, 0.5)' }}>
-                <div className="text-[8px] uppercase font-bold mb-0.5 tracking-wider" style={{ color: 'rgba(58, 90, 138, 1)' }}>Q1</div>
-                <div className="text-sm font-mono font-black" style={{ color: '#dce8ff' }}>{plantMetrics?.doeEnvDetails?.samplingQ1 || 'N/A'}</div>
+                <div className="text-[7px] uppercase font-bold mb-0.5 tracking-wider" style={{ color: 'rgba(58, 90, 138, 1)' }}>Q1 Sampling & Date</div>
+                <div className="text-[11px] font-mono font-black" style={{ color: '#dce8ff' }}>{plantMetrics?.doeEnvDetails?.samplingQ1 || 'N/A'}</div>
               </div>
               <div className="p-2 rounded-lg border text-center" style={{ backgroundColor: 'rgba(26, 47, 90, 0.3)', borderColor: 'rgba(26, 48, 96, 0.5)' }}>
-                <div className="text-[8px] uppercase font-bold mb-0.5 tracking-wider" style={{ color: 'rgba(58, 90, 138, 1)' }}>Q2</div>
-                <div className="text-sm font-mono font-black" style={{ color: '#dce8ff' }}>{plantMetrics?.doeEnvDetails?.samplingQ2 || 'N/A'}</div>
+                <div className="text-[7px] uppercase font-bold mb-0.5 tracking-wider" style={{ color: 'rgba(58, 90, 138, 1)' }}>Q2 Sampling & Date</div>
+                <div className="text-[11px] font-mono font-black" style={{ color: '#dce8ff' }}>{plantMetrics?.doeEnvDetails?.samplingQ2 || 'N/A'}</div>
               </div>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
               <div className="p-2 rounded-lg border text-center" style={{ backgroundColor: 'rgba(26, 47, 90, 0.3)', borderColor: 'rgba(26, 48, 96, 0.5)' }}>
-                <div className="text-[8px] uppercase font-bold mb-0.5 tracking-wider" style={{ color: 'rgba(58, 90, 138, 1)' }}>Expiry</div>
-                <div className="text-xs font-mono font-black" style={{ color: new Date() > new Date(plantMetrics?.doeEnvDetails?.licenceExpiry || '') ? '#f87171' : '#4ade80' }}>
-                  {plantMetrics?.doeEnvDetails?.licenceExpiry || 'N/A'}
+                <div className="text-[7px] uppercase font-bold mb-0.5 tracking-wider" style={{ color: 'rgba(58, 90, 138, 1)' }}>Licence Status</div>
+                <div className="text-[10px] font-black uppercase" style={{ color: new Date() > new Date(plantMetrics?.doeEnvDetails?.licenceExpiry || '') ? '#f87171' : '#4ade80' }}>
+                  {plantMetrics?.doeEnvDetails?.licenceExpiry ? (new Date() > new Date(plantMetrics.doeEnvDetails.licenceExpiry) ? 'Expired' : 'Valid') : 'N/A'}
                 </div>
+              </div>
+              <div className="p-2 rounded-lg border text-center" style={{ backgroundColor: 'rgba(26, 47, 90, 0.3)', borderColor: 'rgba(26, 48, 96, 0.5)' }}>
+                <div className="text-[7px] uppercase font-bold mb-0.5 tracking-wider" style={{ color: 'rgba(58, 90, 138, 1)' }}>Licence Expiry Date</div>
+                <div className="text-[10px] font-mono font-black" style={{ color: '#dce8ff' }}>{plantMetrics?.doeEnvDetails?.licenceExpiry || 'N/A'}</div>
               </div>
             </div>
           </div>

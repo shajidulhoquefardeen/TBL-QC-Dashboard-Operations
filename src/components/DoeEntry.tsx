@@ -34,25 +34,33 @@ export function DoeEntry() {
           🌍 Environment (DOE)
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div className="flex flex-col gap-2 p-4 bg-navy/30 rounded-lg border border-border/50">
-            <label className="text-[10px] text-text-muted font-bold uppercase tracking-wider">Sampling Q1</label>
+            <label className="text-[10px] text-text-muted font-bold uppercase tracking-wider">Q1 Sampling & Date</label>
             <input type="date" className="finp" value={pm.doeEnvDetails?.samplingQ1 || ''} onChange={e => setPm({...pm, doeEnvDetails: { ...(pm.doeEnvDetails || { samplingQ1: '', samplingQ2: '', licenceExpiry: '' }), samplingQ1: e.target.value }})} />
           </div>
           <div className="flex flex-col gap-2 p-4 bg-navy/30 rounded-lg border border-border/50">
-            <label className="text-[10px] text-text-muted font-bold uppercase tracking-wider">Sampling Q2</label>
+            <label className="text-[10px] text-text-muted font-bold uppercase tracking-wider">Q2 Sampling & Date</label>
             <input type="date" className="finp" value={pm.doeEnvDetails?.samplingQ2 || ''} onChange={e => setPm({...pm, doeEnvDetails: { ...(pm.doeEnvDetails || { samplingQ1: '', samplingQ2: '', licenceExpiry: '' }), samplingQ2: e.target.value }})} />
           </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div className="flex flex-col gap-2 p-4 bg-navy/30 rounded-lg border border-border/50">
-            <label className="text-[10px] text-text-muted font-bold uppercase tracking-wider">Licence Expiry</label>
-            <div className="flex flex-col gap-2">
-              <input type="date" className="finp" value={pm.doeEnvDetails?.licenceExpiry || ''} onChange={e => setPm({...pm, doeEnvDetails: { ...(pm.doeEnvDetails || { samplingQ1: '', samplingQ2: '', licenceExpiry: '' }), licenceExpiry: e.target.value }})} />
-              {pm.doeEnvDetails?.licenceExpiry && (
-                <div className={`text-[10px] font-bold uppercase px-3 py-1.5 rounded text-center ${new Date() > new Date(pm.doeEnvDetails.licenceExpiry) ? 'bg-red/10 text-red' : 'bg-green/10 text-green'}`}>
-                  {new Date() > new Date(pm.doeEnvDetails.licenceExpiry) ? '⚠️ Licence Expired' : '✅ Licence Valid'}
-                </div>
-              )}
-            </div>
+            <label className="text-[10px] text-text-muted font-bold uppercase tracking-wider">Date of the Licence Expiry</label>
+            <input type="date" className="finp" value={pm.doeEnvDetails?.licenceExpiry || ''} onChange={e => setPm({...pm, doeEnvDetails: { ...(pm.doeEnvDetails || { samplingQ1: '', samplingQ2: '', licenceExpiry: '' }), licenceExpiry: e.target.value }})} />
+          </div>
+          <div className="flex flex-col gap-2 p-4 bg-navy/30 rounded-lg border border-border/50 justify-center">
+            <label className="text-[10px] text-text-muted font-bold uppercase tracking-wider mb-1">Licence Status</label>
+            {pm.doeEnvDetails?.licenceExpiry ? (
+              <div className={`text-[11px] font-black uppercase px-4 py-2 rounded shadow-inner text-center ${new Date() > new Date(pm.doeEnvDetails.licenceExpiry) ? 'bg-red/20 text-red border border-red/30' : 'bg-green/20 text-green border border-green/30'}`}>
+                {new Date() > new Date(pm.doeEnvDetails.licenceExpiry) ? '⚠️ Licence Expired' : '✅ Licence Valid'}
+              </div>
+            ) : (
+              <div className="text-[11px] font-bold uppercase px-4 py-2 rounded bg-navy/50 text-text-muted border border-border/30 text-center italic">
+                No Date Set
+              </div>
+            )}
           </div>
         </div>
 
