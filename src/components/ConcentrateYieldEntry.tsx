@@ -52,7 +52,7 @@ export function ConcentrateYieldEntry() {
         <div className="space-y-6">
           <div className="bg-navy-card border border-border rounded-lg p-5">
             <div className="font-condensed font-bold text-[13px] tracking-[1.5px] uppercase text-teal mb-3.5 pb-2 border-b border-border">🧪 Concentrate Yield Data Entry</div>
-            <div className="bg-cyan-500/5 border border-cyan-500/20 rounded-md p-[10px_12px] text-[10px] text-text-muted mb-3.5">Enter daily concentrate yield data. This data populates the Conc. Yield KPIs.</div>
+            <div className="bg-teal/5 border border-teal/20 rounded-md p-[10px_12px] text-[10px] text-text-muted mb-3.5">Enter daily concentrate yield data. This data populates the Conc. Yield KPIs.</div>
             
             <div className="grid grid-cols-2 gap-3 mb-3">
               <div className="flex flex-col gap-1"><label className="text-[9px] text-text-muted font-medium uppercase tracking-wider">Date *</label><input type="date" className="finp" value={cDate} onChange={e => setCDate(e.target.value)} /></div>
@@ -65,7 +65,7 @@ export function ConcentrateYieldEntry() {
             
             <div className="flex gap-2.5 justify-end">
               <button className="border border-border bg-transparent text-text-muted rounded px-4 py-2 text-[11px] font-semibold cursor-pointer transition-all hover:border-accent hover:text-accent" onClick={() => {setCFtd(''); setCMtd(''); setCYtd('');}}>Clear</button>
-              <button className="border-none bg-green text-white rounded px-4 py-2 text-[11px] font-bold uppercase tracking-widest cursor-pointer transition-all hover:bg-green-400 shadow-lg" onClick={handleSaveConc}>💾 Save Conc. Data</button>
+              <button className="border-none bg-green text-white rounded px-4 py-2 text-[11px] font-bold uppercase tracking-widest cursor-pointer transition-all hover:bg-green/80 shadow-lg" onClick={handleSaveConc}>💾 Save Conc. Data</button>
             </div>
           </div>
 
@@ -78,7 +78,7 @@ export function ConcentrateYieldEntry() {
                   {concData.length ? concData.slice(0,50).map(r => (
                     <tr key={r.date}>
                       <td>{r.date}</td><td>{fmtPct(r.ftd)}</td><td>{fmtPct(r.mtd)}</td><td>{fmtPct(r.ytd)}</td>
-                      <td><button className="border-none bg-red text-white rounded px-2 py-1 text-[10px] font-semibold cursor-pointer transition-all hover:bg-red-600" onClick={() => deleteConcEntry(r.date)}>✕</button></td>
+                      <td><button className="border-none bg-red text-white rounded px-2 py-1 text-[10px] font-semibold cursor-pointer transition-all hover:bg-red/80" onClick={() => deleteConcEntry(r.date)}>✕</button></td>
                     </tr>
                   )) : <tr><td colSpan={5} className="text-center text-text-dim p-5 text-[10px]">No conc. records yet</td></tr>}
                 </tbody>

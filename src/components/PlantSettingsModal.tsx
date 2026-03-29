@@ -49,7 +49,7 @@ export function PlantSettingsModal({ isOpen, onClose, category, label }: PlantSe
             />
             <button 
               onClick={handleAdd}
-              className="bg-accent text-white px-4 py-2 rounded font-bold text-sm hover:bg-blue-600 transition-colors"
+              className="bg-accent text-white px-4 py-2 rounded font-bold text-sm hover:bg-accent/80 transition-colors"
             >
               Add
             </button>
@@ -69,7 +69,7 @@ export function PlantSettingsModal({ isOpen, onClose, category, label }: PlantSe
                       <div className="flex items-center gap-1">
                         <button 
                           onClick={() => handleRemove(item)}
-                          className="text-[10px] bg-red text-white px-2 py-0.5 rounded hover:bg-red-600 transition-colors"
+                          className="text-[10px] bg-red text-white px-2 py-0.5 rounded hover:bg-red/80 transition-colors"
                         >
                           Confirm
                         </button>

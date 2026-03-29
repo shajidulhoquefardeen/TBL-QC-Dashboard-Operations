@@ -17,8 +17,8 @@ export function DFConsumptionEntry() {
   return (
     <div className="p-[18px_22px]">
       <div className="bg-navy-card border border-border rounded-lg p-3.5 max-w-2xl mx-auto">
-        <div className="font-condensed font-bold text-[13px] tracking-[1.5px] uppercase text-cyan-400 mb-3.5 pb-2 border-b border-border">💧 DF Consumption Data Entry</div>
-        <div className="bg-cyan-500/5 border border-cyan-500/20 rounded-md p-[10px_12px] text-[10px] text-text-muted mb-3.5">Enter monthly DF consumption data. This populates the DF Consumption chart on the QC Dashboard.</div>
+        <div className="font-condensed font-bold text-[13px] tracking-[1.5px] uppercase text-accent mb-3.5 pb-2 border-b border-border">💧 DF Consumption Data Entry</div>
+        <div className="bg-accent/5 border border-accent/20 rounded-md p-[10px_12px] text-[10px] text-text-muted mb-3.5">Enter monthly DF consumption data. This populates the DF Consumption chart on the QC Dashboard.</div>
         
         <div className="grid grid-cols-2 gap-2.5 mb-3.5">
           <div className="flex flex-col gap-1"><label className="text-[9px] text-text-muted font-medium">Month *</label><input type="month" className="finp" value={dfMonth} onChange={e => setDfMonth(e.target.value)} /></div>
@@ -26,7 +26,7 @@ export function DFConsumptionEntry() {
         </div>
         
         <div className="flex gap-2.5 justify-end">
-          <button className="border-none bg-cyan-600 text-white rounded px-3 py-1.5 text-[11px] font-semibold cursor-pointer transition-all hover:bg-cyan-500" onClick={handleSaveDF}>💾 Save DF Data</button>
+          <button className="border-none bg-accent text-white rounded px-3 py-1.5 text-[11px] font-semibold cursor-pointer transition-all hover:bg-accent/80" onClick={handleSaveDF}>💾 Save DF Data</button>
         </div>
 
         <div className="mt-4 pt-3.5 border-t border-border">
@@ -38,7 +38,7 @@ export function DFConsumptionEntry() {
                 {dfData.length ? dfData.slice(0,50).map(r => (
                   <tr key={r.month}>
                     <td>{r.month}</td><td>{r.amount}</td>
-                    <td><button className="border-none bg-red text-white rounded px-2 py-1 text-[10px] font-semibold cursor-pointer transition-all hover:bg-red-600" onClick={() => { if(confirm('Delete?')) deleteDFEntry(r.month); }}>✕</button></td>
+                    <td><button className="border-none bg-red text-white rounded px-2 py-1 text-[10px] font-semibold cursor-pointer transition-all hover:bg-red/80" onClick={() => { if(confirm('Delete?')) deleteDFEntry(r.month); }}>✕</button></td>
                   </tr>
                 )) : <tr><td colSpan={3} className="text-center text-text-dim p-5 text-[10px]">No DF records yet</td></tr>}
               </tbody>

@@ -27,19 +27,19 @@ function AppContent() {
 
   if (!isAuthReady) {
     return (
-      <div className="flex h-screen items-center justify-center font-sans" style={{ backgroundColor: '#0a1628', color: '#dce8ff' }}>
-        <div className="animate-pulse" style={{ color: '#00e5ff' }}>Loading...</div>
+      <div className="flex h-screen items-center justify-center font-sans bg-navy text-text">
+        <div className="animate-pulse text-accent">Loading...</div>
       </div>
     );
   }
 
   if (!user) {
     return (
-      <div className="flex h-screen items-center justify-center font-sans" style={{ backgroundColor: '#0a1628', color: '#dce8ff' }}>
-        <div className="p-8 rounded-xl shadow-xl max-w-sm w-full text-center" style={{ backgroundColor: '#132244', border: '1px solid #1a3060' }}>
-          <div className="w-16 h-16 rounded-xl mx-auto flex items-center justify-center font-condensed font-extrabold text-2xl text-white mb-4" style={{ backgroundColor: '#1565c0' }}>TBL</div>
+      <div className="flex h-screen items-center justify-center font-sans bg-navy text-text">
+        <div className="p-8 rounded-xl shadow-xl max-w-sm w-full text-center bg-navy-card border border-border">
+          <div className="w-16 h-16 rounded-xl mx-auto flex items-center justify-center font-condensed font-extrabold text-2xl text-white mb-4 bg-pepsi">TBL</div>
           <h1 className="text-xl font-bold mb-2">Transcom Beverages</h1>
-          <p className="text-sm mb-6" style={{ color: '#6a8fc0' }}>Quality Control & Yield System</p>
+          <p className="text-sm mb-6 text-text-muted">Quality Control & Yield System</p>
           
           <form 
             onSubmit={async (e) => {
@@ -51,32 +51,29 @@ function AppContent() {
             className="flex flex-col gap-3 text-left"
           >
             <div>
-              <label className="text-[10px] uppercase tracking-wider mb-1 block" style={{ color: '#6a8fc0' }}>Username</label>
+              <label className="text-[10px] uppercase tracking-wider mb-1 block text-text-muted">Username</label>
               <input 
                 type="text" 
                 className="finp w-full" 
                 value={username} 
                 onChange={e => setUsername(e.target.value)} 
-                placeholder="admin"
                 required
               />
             </div>
             <div>
-              <label className="text-[10px] uppercase tracking-wider mb-1 block" style={{ color: '#6a8fc0' }}>Password</label>
+              <label className="text-[10px] uppercase tracking-wider mb-1 block text-text-muted">Password</label>
               <input 
                 type="password" 
                 className="finp w-full" 
                 value={password} 
                 onChange={e => setPassword(e.target.value)} 
-                placeholder="••••"
                 required
               />
             </div>
             <button 
               type="submit"
               disabled={loading}
-              className="w-full font-bold py-2.5 rounded hover:bg-white transition-colors mt-2 disabled:opacity-50"
-              style={{ backgroundColor: '#00e5ff', color: '#0a1628' }}
+              className="w-full font-bold py-2.5 rounded hover:bg-white transition-colors mt-2 disabled:opacity-50 bg-accent text-navy"
             >
               {loading ? 'Logging in...' : 'Log In'}
             </button>
@@ -87,7 +84,7 @@ function AppContent() {
   }
 
   return (
-    <div className="flex h-screen font-sans overflow-hidden" style={{ backgroundColor: '#0a1628', color: '#dce8ff' }}>
+    <div className="flex h-screen font-sans overflow-hidden bg-navy text-text">
       <Sidebar />
       <div className="flex-1 flex flex-col h-full overflow-hidden">
         <Topbar />
@@ -105,7 +102,7 @@ function AppContent() {
       </div>
       <DataEntryModal />
       {toastMsg && (
-        <div className="fixed bottom-5 right-5 text-white px-4 py-2 rounded shadow-lg text-sm z-50 animate-bounce" style={{ backgroundColor: '#00e5ff' }}>
+        <div className="fixed bottom-5 right-5 text-navy px-4 py-2 rounded shadow-lg text-sm z-50 animate-bounce bg-accent font-bold">
           {toastMsg}
         </div>
       )}

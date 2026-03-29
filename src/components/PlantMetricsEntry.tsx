@@ -51,10 +51,10 @@ export function PlantMetricsEntry() {
   return (
     <div className="p-6">
       <div className="bg-navy-card border border-border rounded-lg p-5 max-w-5xl mx-auto">
-        <div className="font-condensed font-bold text-[13px] tracking-[1.5px] uppercase text-amber-400 mb-4 pb-2 border-b border-border flex items-center gap-2">
+        <div className="font-condensed font-bold text-[13px] tracking-[1.5px] uppercase text-amber mb-4 pb-2 border-b border-border flex items-center gap-2">
           🏭 3C Score & Capability
         </div>
-        <div className="bg-amber-500/5 border border-amber-500/20 rounded-md p-3 text-[10px] text-text-muted mb-6">
+        <div className="bg-amber/5 border border-amber/20 rounded-md p-3 text-[10px] text-text-muted mb-6">
           Manage plant capability ratings and 3C (Control & Consumer) scores.
         </div>
         
@@ -113,7 +113,7 @@ export function PlantMetricsEntry() {
         </div>
 
         <div className="flex justify-end mt-8">
-          <button className="border-none bg-amber-600 text-white rounded px-8 py-2.5 text-[11px] font-bold uppercase tracking-widest cursor-pointer transition-all hover:bg-amber-500 shadow-lg" onClick={handleSavePlantMetrics}>💾 Save 3C & Capability Data</button>
+          <button className="border-none bg-amber text-white rounded px-8 py-2.5 text-[11px] font-bold uppercase tracking-widest cursor-pointer transition-all hover:bg-amber/80 shadow-lg" onClick={handleSavePlantMetrics}>💾 Save 3C & Capability Data</button>
         </div>
       </div>
     </div>

@@ -7,7 +7,7 @@ import { CHEMISTS, MONTHS, FLAVOUR_COLOR } from '../constants';
 Chart.register(...registerables);
 
 export function YieldDashboard() {
-  const { runs, customSettings } = useAppContext();
+  const { runs, customSettings, theme } = useAppContext();
   const yr = yrRuns(runs);
   const td = todayRuns(runs);
   const now = new Date();
@@ -28,6 +28,9 @@ export function YieldDashboard() {
   useEffect(() => {
     const charts: Chart[] = [];
 
+    const gridColor = theme === 'dark' ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.02)';
+    const textColor = theme === 'dark' ? '#64748b' : '#94a3b8';
+
     const createChart = (ref: React.RefObject<HTMLCanvasElement | null>, type: any, data: any, options: any) => {
       if (ref.current) {
         charts.push(new Chart(ref.current, { type, data, options }));
@@ -40,11 +43,11 @@ export function YieldDashboard() {
     const ftdVals   = tdValid.length ? tdValid.map(r => calcYield(r).yieldPct) : [99.98];
     createChart(ftdChartRef, 'bar', {
       labels: ftdLabels,
-      datasets: [{ label: 'FTD Yield %', data: ftdVals, backgroundColor: '#1565c099', borderColor: '#1565c0', borderWidth: 1, borderRadius: 2 }]
+      datasets: [{ label: 'FTD Yield %', data: ftdVals, backgroundColor: '#3b82f699', borderColor: '#3b82f6', borderWidth: 1, borderRadius: 2 }]
     }, {
       responsive: true, maintainAspectRatio: false, indexAxis: 'y',
       plugins: { legend: { display: false } },
-      scales: { x: { min: 95, max: 106, ticks: { color: '#6a8fc0', font: { size: 8 } }, grid: { color: 'rgba(26,48,96,.7)' } }, y: { ticks: { color: '#6a8fc0', font: { size: 8 } }, grid: { color: 'rgba(26,48,96,.7)' } } }
+      scales: { x: { min: 95, max: 106, ticks: { color: textColor, font: { size: 8 } }, grid: { color: gridColor } }, y: { ticks: { color: textColor, font: { size: 8 } }, grid: { color: gridColor } } }
     });
 
     // Monthly Chart
@@ -55,11 +58,11 @@ export function YieldDashboard() {
     });
     createChart(monthlyChartRef, 'bar', {
       labels: last3.map(m=>m.lbl),
-      datasets: [{ label: 'Monthly Avg', data: last3.map(m=>m.val), backgroundColor: '#1565c099', borderColor: '#1565c0', borderWidth: 1, borderRadius: 2 }]
+      datasets: [{ label: 'Monthly Avg', data: last3.map(m=>m.val), backgroundColor: '#3b82f699', borderColor: '#3b82f6', borderWidth: 1, borderRadius: 2 }]
     }, {
       responsive: true, maintainAspectRatio: false,
       plugins: { legend: { display: false } },
-      scales: { y: { min: 95, max: 106, ticks: { color: '#6a8fc0', font: { size: 8 } }, grid: { color: 'rgba(26,48,96,.7)' } }, x: { ticks: { color: '#6a8fc0', font: { size: 8 } }, grid: { color: 'rgba(26,48,96,.7)' } } }
+      scales: { y: { min: 95, max: 106, ticks: { color: textColor, font: { size: 8 } }, grid: { color: gridColor } }, x: { ticks: { color: textColor, font: { size: 8 } }, grid: { color: gridColor } } }
     });
 
     // Product Charts
@@ -69,14 +72,14 @@ export function YieldDashboard() {
         const mr = pr.filter(r => { const rd=new Date(r.date); const md=new Date(now.getFullYear(),now.getMonth()-( 2-i),1); return rd.getMonth()===md.getMonth(); });
         return avgYield(mr);
       });
-      const col = FLAVOUR_COLOR[flavour] || '#1565c0';
+      const col = FLAVOUR_COLOR[flavour] || '#3b82f6';
       createChart(ref, 'bar', {
         labels: last3.map(m=>m.lbl),
         datasets: [{ label: flavour, data: vals, backgroundColor: col+'99', borderColor: col, borderWidth: 1, borderRadius: 2 }]
       }, {
         responsive: true, maintainAspectRatio: false,
         plugins: { legend: { display: false } },
-        scales: { y: { min: 94, max: 107, ticks: { color: '#6a8fc0', font: { size: 8 } }, grid: { color: 'rgba(26,48,96,.7)' } }, x: { ticks: { color: '#6a8fc0', font: { size: 8 } }, grid: { color: 'rgba(26,48,96,.7)' } } }
+        scales: { y: { min: 94, max: 107, ticks: { color: textColor, font: { size: 8 } }, grid: { color: gridColor } }, x: { ticks: { color: textColor, font: { size: 8 } }, grid: { color: gridColor } } }
       });
     };
     prodChart(pepsiChartRef, 'Pepsi');
@@ -92,17 +95,17 @@ export function YieldDashboard() {
         return avgYield(dr);
       });
       const col = 
-        line === 'Line 1' ? '#4caf50' : 
-        line === 'Line 2' ? '#ff9800' : 
-        line === 'Line 3' ? '#00bcd4' : 
-        '#7b1fa2';
+        line === 'Line 1' ? '#10b981' : 
+        line === 'Line 2' ? '#f59e0b' : 
+        line === 'Line 3' ? '#06b6d4' : 
+        '#8b5cf6';
       createChart(ref, 'bar', {
         labels: last7.map(d=>d.slice(5)),
         datasets: [{ label: line, data: vals, backgroundColor: col+'99', borderColor: col, borderWidth: 1, borderRadius: 2 }]
       }, {
         responsive: true, maintainAspectRatio: false,
         plugins: { legend: { display: false } },
-        scales: { y: { min: 94, max: 107, ticks: { color: '#6a8fc0', font: { size: 8 } }, grid: { color: 'rgba(26,48,96,.7)' } }, x: { ticks: { color: '#6a8fc0', font: { size: 8 } }, grid: { color: 'rgba(26,48,96,.7)' } } }
+        scales: { y: { min: 94, max: 107, ticks: { color: textColor, font: { size: 8 } }, grid: { color: gridColor } }, x: { ticks: { color: textColor, font: { size: 8 } }, grid: { color: gridColor } } }
       });
     };
     lineLastDays(l1ChartRef, 'Line 1');
@@ -111,7 +114,7 @@ export function YieldDashboard() {
     lineLastDays(l4ChartRef, 'Line 4');
 
     return () => charts.forEach(c => c.destroy());
-  }, [runs]);
+  }, [runs, theme]);
 
   const chemYield = (name: string) => {
     const cr = yr.filter(r => r.chemistStartup===name||r.chemistEndup===name);
@@ -121,11 +124,11 @@ export function YieldDashboard() {
   const renderChemCell = (c: string) => {
     const y = chemYield(c);
     const yStr = y > 0 ? y.toFixed(1) + '%' : '—';
-    const col = y > 0 ? yieldColor(y) : '#3a5a8a';
+    const col = y > 0 ? yieldColor(y) : 'text-text-dim';
     return (
-      <div key={c} style={{ backgroundColor: '#132244', border: '1px solid #1a3060', borderRadius: '12px', padding: '8px', textAlign: 'center', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)' }}>
-        <div style={{ color: col, fontFamily: 'Inter Condensed, sans-serif', fontWeight: 900, fontSize: '20px', lineHeight: 1 }}>{yStr}</div>
-        <div style={{ color: '#6a8fc0', fontSize: '8px', marginTop: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Mr. {c}</div>
+      <div key={c} className="bg-navy-card border border-border rounded-xl p-2 text-center h-full flex flex-col justify-center shadow-md">
+        <div className={`${y > 0 ? col : 'text-text-dim'} font-condensed font-black text-xl leading-none`}>{yStr}</div>
+        <div className="text-text-muted text-[8px] mt-1 whitespace-nowrap overflow-hidden text-ellipsis">Mr. {c}</div>
       </div>
     );
   };
@@ -133,93 +136,93 @@ export function YieldDashboard() {
   const pending = runs.filter(r=>['micro_due','started'].includes(getStatus(r).code)).slice(0,8);
 
   return (
-    <div id="yield-dashboard" style={{ padding: '16px', maxWidth: 'fit-content', backgroundColor: '#0a0e17', minHeight: '100vh', marginLeft: 'auto', marginRight: 'auto', color: '#ffffff' }}>
+    <div id="yield-dashboard" className="p-4 max-w-fit bg-navy min-h-screen mx-auto text-text">
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '16px', paddingBottom: '12px', borderBottom: '1px solid rgba(26, 48, 96, 0.3)' }}>
+      <div className="flex justify-between items-end mb-4 pb-3 border-b border-border/30">
         <div>
-          <h1 style={{ color: '#dce8ff', fontFamily: 'Inter Condensed, sans-serif', fontWeight: 900, fontSize: '20px', letterSpacing: '-0.025em', textTransform: 'uppercase' }}>Yield Dashboard</h1>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '2px' }}>
-            <div style={{ color: '#6a8fc0', fontSize: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ width: '6px', height: '6px', borderRadius: '9999px', backgroundColor: '#22c55e' }}></span>
-              Chittagong Plant · <strong style={{ color: '#dce8ff' }}>{now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</strong>
+          <h1 className="text-text font-condensed font-black text-xl tracking-tight uppercase">Yield Dashboard</h1>
+          <div className="flex items-center gap-4 mt-0.5">
+            <div className="text-text-muted text-[10px] flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-green"></span>
+              Chittagong Plant · <strong className="text-text">{now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</strong>
             </div>
           </div>
         </div>
-        <div style={{ backgroundColor: '#1565c0', paddingLeft: '12px', paddingRight: '12px', paddingTop: '6px', paddingBottom: '6px', borderRadius: '6px', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)', display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-          <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '8px', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.1em' }}>Reporting Period</div>
-          <div style={{ color: '#ffffff', fontSize: '14px', fontFamily: 'Inter Condensed, sans-serif', fontWeight: 900, lineHeight: 1, marginTop: '2px' }}>{MONTHS[now.getMonth()]} {now.getFullYear()}</div>
+        <div className="bg-pepsi px-3 py-1.5 rounded-md shadow-lg flex flex-col items-end">
+          <div className="text-white/70 text-[8px] uppercase font-bold tracking-widest">Reporting Period</div>
+          <div className="text-white text-sm font-condensed font-black leading-none mt-0.5">{MONTHS[now.getMonth()]} {now.getFullYear()}</div>
         </div>
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '260px 260px 1fr', gap: '12px' }}>
-          <div style={{ backgroundColor: '#132244', border: '1px solid #1a3060', borderRadius: '12px', padding: '12px', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)' }}>
-            <div style={{ color: '#6a8fc0', fontFamily: 'Inter Condensed, sans-serif', fontWeight: 700, fontSize: '10px', letterSpacing: '2px', marginBottom: '8px', textTransform: 'uppercase' }}>FTD Conc. Yield</div>
-            <div style={{ position: 'relative', height: '140px' }}><canvas ref={ftdChartRef}></canvas></div>
+      <div className="flex flex-col gap-3">
+        <div className="grid grid-cols-[260px_260px_1fr] gap-3">
+          <div className="bg-navy-card border border-border rounded-xl p-3 shadow-xl">
+            <div className="text-text-muted font-condensed font-bold text-[10px] tracking-[2px] mb-2 uppercase">FTD Conc. Yield</div>
+            <div className="relative h-[140px]"><canvas ref={ftdChartRef}></canvas></div>
           </div>
-          <div style={{ backgroundColor: '#132244', border: '1px solid #1a3060', borderRadius: '12px', padding: '12px', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)' }}>
-            <div style={{ color: '#6a8fc0', fontFamily: 'Inter Condensed, sans-serif', fontWeight: 700, fontSize: '10px', letterSpacing: '2px', marginBottom: '8px', textTransform: 'uppercase' }}>Month Wise Yield</div>
-            <div style={{ position: 'relative', height: '140px' }}><canvas ref={monthlyChartRef}></canvas></div>
+          <div className="bg-navy-card border border-border rounded-xl p-3 shadow-xl">
+            <div className="text-text-muted font-condensed font-bold text-[10px] tracking-[2px] mb-2 uppercase">Month Wise Yield</div>
+            <div className="relative h-[140px]"><canvas ref={monthlyChartRef}></canvas></div>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', height: '100%', gap: '8px' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, minmax(0, 1fr))', gap: '8px', flex: '1 1 0%', height: '100%' }}>
+          <div className="flex flex-col h-full gap-2">
+            <div className="grid grid-cols-5 gap-2 flex-1 h-full">
               {allChemists.slice(0, 5).map(renderChemCell)}
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, minmax(0, 1fr))', gap: '8px', flex: '1 1 0%', height: '100%' }}>
+            <div className="grid grid-cols-5 gap-2 flex-1 h-full">
               {allChemists.slice(5, 10).map(renderChemCell)}
             </div>
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: '12px' }}>
-          <div style={{ backgroundColor: '#132244', border: '1px solid #1a3060', borderRadius: '12px', padding: '12px', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)' }}>
-            <div style={{ color: '#6a8fc0', fontFamily: 'Inter Condensed, sans-serif', fontWeight: 700, fontSize: '10px', letterSpacing: '2px', marginBottom: '4px', textTransform: 'uppercase' }}>Pepsi Yield</div>
-            <div style={{ position: 'relative', height: '100px' }}><canvas ref={pepsiChartRef}></canvas></div>
+        <div className="grid grid-cols-4 gap-3">
+          <div className="bg-navy-card border border-border rounded-xl p-3 shadow-xl">
+            <div className="text-text-muted font-condensed font-bold text-[10px] tracking-[2px] mb-1 uppercase">Pepsi Yield</div>
+            <div className="relative h-[100px]"><canvas ref={pepsiChartRef}></canvas></div>
           </div>
-          <div style={{ backgroundColor: '#132244', border: '1px solid #1a3060', borderRadius: '12px', padding: '12px', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)' }}>
-            <div style={{ color: '#6a8fc0', fontFamily: 'Inter Condensed, sans-serif', fontWeight: 700, fontSize: '10px', letterSpacing: '2px', marginBottom: '4px', textTransform: 'uppercase' }}>7UP EF Yield</div>
-            <div style={{ position: 'relative', height: '100px' }}><canvas ref={upChartRef}></canvas></div>
+          <div className="bg-navy-card border border-border rounded-xl p-3 shadow-xl">
+            <div className="text-text-muted font-condensed font-bold text-[10px] tracking-[2px] mb-1 uppercase">7UP EF Yield</div>
+            <div className="relative h-[100px]"><canvas ref={upChartRef}></canvas></div>
           </div>
-          <div style={{ backgroundColor: '#132244', border: '1px solid #1a3060', borderRadius: '12px', padding: '12px', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)' }}>
-            <div style={{ color: '#6a8fc0', fontFamily: 'Inter Condensed, sans-serif', fontWeight: 700, fontSize: '10px', letterSpacing: '2px', marginBottom: '4px', textTransform: 'uppercase' }}>Mirinda Yield</div>
-            <div style={{ position: 'relative', height: '100px' }}><canvas ref={mirindaChartRef}></canvas></div>
+          <div className="bg-navy-card border border-border rounded-xl p-3 shadow-xl">
+            <div className="text-text-muted font-condensed font-bold text-[10px] tracking-[2px] mb-1 uppercase">Mirinda Yield</div>
+            <div className="relative h-[100px]"><canvas ref={mirindaChartRef}></canvas></div>
           </div>
-          <div style={{ backgroundColor: '#132244', border: '1px solid #1a3060', borderRadius: '12px', padding: '12px', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)' }}>
-            <div style={{ color: '#6a8fc0', fontFamily: 'Inter Condensed, sans-serif', fontWeight: 700, fontSize: '10px', letterSpacing: '2px', marginBottom: '4px', textTransform: 'uppercase' }}>Mountain Dew Yield</div>
-            <div style={{ position: 'relative', height: '100px' }}><canvas ref={dewChartRef}></canvas></div>
+          <div className="bg-navy-card border border-border rounded-xl p-3 shadow-xl">
+            <div className="text-text-muted font-condensed font-bold text-[10px] tracking-[2px] mb-1 uppercase">Mountain Dew Yield</div>
+            <div className="relative h-[100px]"><canvas ref={dewChartRef}></canvas></div>
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '260px 1fr 1fr', gap: '12px' }}>
-          <div style={{ backgroundColor: '#132244', border: '1px solid #1a3060', borderRadius: '12px', padding: '12px', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)', overflowY: 'auto', gridRow: 'span 2', display: 'flex', flexDirection: 'column' }}>
-            <div style={{ color: '#6a8fc0', fontFamily: 'Inter Condensed, sans-serif', fontWeight: 700, fontSize: '10px', letterSpacing: '2px', marginBottom: '8px', textTransform: 'uppercase' }}>⚠ Needs Attention</div>
-            <div style={{ flex: 1, overflowY: 'auto' }}>
+        <div className="grid grid-cols-[260px_1fr_1fr] gap-3">
+          <div className="bg-navy-card border border-border rounded-xl p-3 shadow-xl overflow-y-auto row-span-2 flex flex-col">
+            <div className="text-text-muted font-condensed font-bold text-[10px] tracking-[2px] mb-2 uppercase">⚠ Needs Attention</div>
+            <div className="flex-1 overflow-y-auto">
               {pending.length ? pending.map(r => {
                 const st = getStatus(r);
                 return (
-                  <div key={r.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '4px', paddingBottom: '4px', fontSize: '9px', borderBottom: '1px solid rgba(26, 47, 90, 0.4)' }}>
-                    <span style={{ color: '#dce8ff' }}>L{r.line?.slice(-1) || '?'} · {r.flavour?.split(' ')[0] || '?'} · B{r.batchNo?.slice(-5) || '?'}</span>
-                    <span style={{ ...st.style, display: 'inline-flex', alignItems: 'center', gap: '3px', fontSize: '7px', fontWeight: 700, letterSpacing: '0.5px', paddingLeft: '6px', paddingRight: '6px', paddingTop: '2px', paddingBottom: '2px', borderRadius: '3px' }}>{st.lbl}</span>
+                  <div key={r.id} className="flex justify-between items-center py-1 text-[9px] border-b border-border/40">
+                    <span className="text-text">L{r.line?.slice(-1) || '?'} · {r.flavour?.split(' ')[0] || '?'} · B{r.batchNo?.slice(-5) || '?'}</span>
+                    <span style={st.style} className="inline-flex items-center gap-[3px] text-[7px] font-bold tracking-[0.5px] px-1.5 py-0.5 rounded-[3px]">{st.lbl}</span>
                   </div>
                 );
-              }) : <div style={{ color: '#4caf50', fontSize: '10px', marginTop: '8px' }}>✔ All up to date</div>}
+              }) : <div className="text-green text-[10px] mt-2">✔ All up to date</div>}
             </div>
           </div>
-          <div style={{ backgroundColor: '#132244', border: '1px solid #1a3060', borderRadius: '12px', padding: '12px', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)' }}>
-            <div style={{ color: '#6a8fc0', fontFamily: 'Inter Condensed, sans-serif', fontWeight: 700, fontSize: '10px', letterSpacing: '2px', marginBottom: '4px', textTransform: 'uppercase' }}>Line 4 Yield</div>
-            <div style={{ position: 'relative', height: '100px' }}><canvas ref={l4ChartRef}></canvas></div>
+          <div className="bg-navy-card border border-border rounded-xl p-3 shadow-xl">
+            <div className="text-text-muted font-condensed font-bold text-[10px] tracking-[2px] mb-1 uppercase">Line 4 Yield</div>
+            <div className="relative h-[100px]"><canvas ref={l4ChartRef}></canvas></div>
           </div>
-          <div style={{ backgroundColor: '#132244', border: '1px solid #1a3060', borderRadius: '12px', padding: '12px', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)' }}>
-            <div style={{ color: '#6a8fc0', fontFamily: 'Inter Condensed, sans-serif', fontWeight: 700, fontSize: '10px', letterSpacing: '2px', marginBottom: '4px', textTransform: 'uppercase' }}>Line 3 Yield</div>
-            <div style={{ position: 'relative', height: '100px' }}><canvas ref={l3ChartRef}></canvas></div>
+          <div className="bg-navy-card border border-border rounded-xl p-3 shadow-xl">
+            <div className="text-text-muted font-condensed font-bold text-[10px] tracking-[2px] mb-1 uppercase">Line 3 Yield</div>
+            <div className="relative h-[100px]"><canvas ref={l3ChartRef}></canvas></div>
           </div>
-          <div style={{ backgroundColor: '#132244', border: '1px solid #1a3060', borderRadius: '12px', padding: '12px', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)' }}>
-            <div style={{ color: '#6a8fc0', fontFamily: 'Inter Condensed, sans-serif', fontWeight: 700, fontSize: '10px', letterSpacing: '2px', marginBottom: '4px', textTransform: 'uppercase' }}>Line 2 Yield</div>
-            <div style={{ position: 'relative', height: '100px' }}><canvas ref={l2ChartRef}></canvas></div>
+          <div className="bg-navy-card border border-border rounded-xl p-3 shadow-xl">
+            <div className="text-text-muted font-condensed font-bold text-[10px] tracking-[2px] mb-1 uppercase">Line 2 Yield</div>
+            <div className="relative h-[100px]"><canvas ref={l2ChartRef}></canvas></div>
           </div>
-          <div style={{ backgroundColor: '#132244', border: '1px solid #1a3060', borderRadius: '12px', padding: '12px', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)' }}>
-            <div style={{ color: '#6a8fc0', fontFamily: 'Inter Condensed, sans-serif', fontWeight: 700, fontSize: '10px', letterSpacing: '2px', marginBottom: '4px', textTransform: 'uppercase' }}>Line 1 Yield</div>
-            <div style={{ position: 'relative', height: '100px' }}><canvas ref={l1ChartRef}></canvas></div>
+          <div className="bg-navy-card border border-border rounded-xl p-3 shadow-xl">
+            <div className="text-text-muted font-condensed font-bold text-[10px] tracking-[2px] mb-1 uppercase">Line 1 Yield</div>
+            <div className="relative h-[100px]"><canvas ref={l1ChartRef}></canvas></div>
           </div>
         </div>
       </div>

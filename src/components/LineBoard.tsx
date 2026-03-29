@@ -13,7 +13,7 @@ export function LineBoard() {
     <div className="p-[18px_22px]">
       <div className="flex justify-between items-center mb-3.5">
         <div className="font-condensed font-bold text-[13px] tracking-[1.5px] uppercase text-text-muted flex items-center gap-1.5 before:content-[''] before:w-0.5 before:h-[13px] before:bg-accent before:rounded-sm">{allLines.length}-Line Operations Board</div>
-        <button className="border-none bg-pepsi text-white rounded px-3 py-1.5 text-[11px] font-semibold cursor-pointer transition-all hover:bg-blue-600" onClick={() => openModal()}>+ Start New Run</button>
+        <button className="border-none bg-pepsi text-white rounded px-3 py-1.5 text-[11px] font-semibold cursor-pointer transition-all hover:bg-pepsi/80" onClick={() => openModal()}>+ Start New Run</button>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
@@ -41,20 +41,20 @@ export function LineBoard() {
               )}
               <div className={`font-condensed font-extrabold text-[20px] my-1 ${yCC}`}>{yP}</div>
               <div className="flex gap-1.5 flex-wrap mt-2">
-                <button className="border-none bg-pepsi text-white rounded px-2 py-1 text-[10px] font-semibold cursor-pointer transition-all hover:bg-blue-600" onClick={() => openModal(null, ln)}>+ Start</button>
+                <button className="border-none bg-pepsi text-white rounded px-2 py-1 text-[10px] font-semibold cursor-pointer transition-all hover:bg-pepsi/80" onClick={() => openModal(null, ln)}>+ Start</button>
                 {latest && st.code !== 'closed' && (
                   <div className="flex gap-1">
                     {role === 'superadmin' && (
                       <button 
                         onClick={() => toggleRunLock(latest.id)}
-                        className={`p-1 rounded transition-colors ${latest.isLocked ? 'bg-amber-100 text-amber-600' : 'bg-gray-100 text-gray-400'}`}
+                        className={`p-1 rounded transition-colors ${latest.isLocked ? 'bg-amber/20 text-amber' : 'bg-navy-light text-text-muted'}`}
                         title={latest.isLocked ? "Unlock" : "Lock"}
                       >
                         {latest.isLocked ? <Lock size={12} /> : <Unlock size={12} />}
                       </button>
                     )}
                     <button 
-                      className={`border-none rounded px-2 py-1 text-[10px] font-semibold cursor-pointer transition-all ${latest.isLocked && role !== 'superadmin' ? 'bg-gray-50 text-gray-300 cursor-not-allowed' : 'bg-amber text-navy hover:bg-amber-400'}`} 
+                      className={`border-none rounded px-2 py-1 text-[10px] font-semibold cursor-pointer transition-all ${latest.isLocked && role !== 'superadmin' ? 'bg-navy-light text-text-muted cursor-not-allowed' : 'bg-amber text-navy hover:bg-amber/80'}`} 
                       onClick={() => openModal(latest.id)}
                       disabled={latest.isLocked && role !== 'superadmin'}
                     >
@@ -87,7 +87,7 @@ export function LineBoard() {
                 const hasMicro = r.tpc !== undefined && r.tpc !== null && r.tpc !== '';
 
                 return (
-                  <tr key={r.id} className={st.code === 'micro_due' ? 'bg-amber-500/5' : 'bg-cyan-500/5'}>
+                  <tr key={r.id} className={st.code === 'micro_due' ? 'bg-amber/5' : 'bg-teal/5'}>
                     <td className="font-mono text-[9px]">{r.batchNo || '—'}</td>
                     <td className="d">{r.date || '—'}</td>
                     <td><strong>{r.line?.replace('Line ','') || '?'}</strong></td>
@@ -98,21 +98,21 @@ export function LineBoard() {
                     <td className="d">{r.sku || '—'}ml</td>
                     <td><span className={`inline-flex items-center gap-[3px] text-[8px] font-bold tracking-[.5px] px-1.5 py-0.5 rounded-[3px] ${st.cls}`}>{st.lbl}</span></td>
                     <td className={`${yieldColor(yld.yieldPct)} font-condensed font-bold text-[13px]`}>{yP}</td>
-                    <td><div className={`w-3.5 h-3.5 rounded-[3px] flex items-center justify-center text-[8px] font-bold shrink-0 ${hasSyr ? 'bg-green-500/20 text-green' : 'bg-red-500/20 text-red'}`}>{hasSyr ? '✔' : '✖'}</div></td>
-                    <td><div className={`w-3.5 h-3.5 rounded-[3px] flex items-center justify-center text-[8px] font-bold shrink-0 ${hasFG ? 'bg-green-500/20 text-green' : 'bg-red-500/20 text-red'}`}>{hasFG ? '✔' : '✖'}</div></td>
-                    <td><div className={`w-3.5 h-3.5 rounded-[3px] flex items-center justify-center text-[8px] font-bold shrink-0 ${hasMicro ? 'bg-green-500/20 text-green' : st.code === 'micro_due' ? 'bg-red-500/20 text-red' : 'bg-amber-500/15 text-amber'}`}>{hasMicro ? '✔' : st.code === 'micro_due' ? '✖' : '⏳'}</div></td>
+                    <td><div className={`w-3.5 h-3.5 rounded-[3px] flex items-center justify-center text-[8px] font-bold shrink-0 ${hasSyr ? 'bg-green/20 text-green' : 'bg-red/20 text-red'}`}>{hasSyr ? '✔' : '✖'}</div></td>
+                    <td><div className={`w-3.5 h-3.5 rounded-[3px] flex items-center justify-center text-[8px] font-bold shrink-0 ${hasFG ? 'bg-green/20 text-green' : 'bg-red/20 text-red'}`}>{hasFG ? '✔' : '✖'}</div></td>
+                    <td><div className={`w-3.5 h-3.5 rounded-[3px] flex items-center justify-center text-[8px] font-bold shrink-0 ${hasMicro ? 'bg-green/20 text-green' : st.code === 'micro_due' ? 'bg-red/20 text-red' : 'bg-amber/15 text-amber'}`}>{hasMicro ? '✔' : st.code === 'micro_due' ? '✖' : '⏳'}</div></td>
                     <td className="flex gap-1">
                       {role === 'superadmin' && (
                         <button 
                           onClick={() => toggleRunLock(r.id)}
-                          className={`p-1 rounded transition-colors ${r.isLocked ? 'bg-amber-100 text-amber-600' : 'bg-gray-100 text-gray-400'}`}
+                          className={`p-1 rounded transition-colors ${r.isLocked ? 'bg-amber/20 text-amber' : 'bg-navy-light text-text-muted'}`}
                           title={r.isLocked ? "Unlock" : "Lock"}
                         >
                           {r.isLocked ? <Lock size={12} /> : <Unlock size={12} />}
                         </button>
                       )}
                       <button 
-                        className={`border-none rounded px-2 py-1 text-[10px] font-semibold cursor-pointer transition-all ${r.isLocked && role !== 'superadmin' ? 'bg-gray-50 text-gray-300 cursor-not-allowed' : 'bg-pepsi text-white hover:bg-blue-600'}`} 
+                        className={`border-none rounded px-2 py-1 text-[10px] font-semibold cursor-pointer transition-all ${r.isLocked && role !== 'superadmin' ? 'bg-navy-light text-text-muted cursor-not-allowed' : 'bg-pepsi text-white hover:bg-pepsi/80'}`} 
                         onClick={() => openModal(r.id)}
                         disabled={r.isLocked && role !== 'superadmin'}
                       >

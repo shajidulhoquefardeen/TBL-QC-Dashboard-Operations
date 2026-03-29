@@ -8,10 +8,10 @@ export function DashboardPreview() {
   const latestDf = dfData && dfData.length > 0 ? dfData[dfData.length - 1] : null;
 
   const MetricCard = ({ title, value, unit, color }: { title: string, value: string | number, unit: string, color: string }) => (
-    <div className="bg-navy-card border border-border rounded-lg p-3 flex flex-col gap-1">
+    <div className="bg-navy-card border border-border rounded-xl p-3 flex flex-col gap-1 transition-all hover:translate-y-[-2px]">
       <div className="text-[9px] text-text-muted font-bold uppercase tracking-wider">{title}</div>
-      <div className={`text-xl font-condensed font-bold ${color}`}>
-        {value}<span className="text-[10px] ml-1 opacity-70">{unit}</span>
+      <div className={`text-2xl font-condensed font-black ${color}`}>
+        {value}<span className="text-[10px] ml-1 opacity-70 font-sans font-normal">{unit}</span>
       </div>
     </div>
   );
@@ -27,19 +27,19 @@ export function DashboardPreview() {
           title="Latest Sugar Yield" 
           value={latestSugar?.ftd || '—'} 
           unit="%" 
-          color="text-amber-400" 
+          color="text-amber" 
         />
         <MetricCard 
           title="Latest Conc. Yield" 
           value={latestConc?.ftd || '—'} 
           unit="%" 
-          color="text-blue-400" 
+          color="text-accent" 
         />
         <MetricCard 
           title="DF Consumption" 
           value={latestDf?.ftd || '—'} 
           unit="L/Case" 
-          color="text-teal-400" 
+          color="text-teal" 
         />
       </div>
 
@@ -48,7 +48,7 @@ export function DashboardPreview() {
         <div className="grid grid-cols-2 gap-2">
           {['Micro', 'Analytical', 'Sensory'].map(key => {
             const val = (plantMetrics as any)?.[`cap${key}`] || 'Green';
-            const color = val === 'Green' ? 'bg-green' : val === 'Yellow' ? 'bg-amber-400' : val === 'Red' ? 'bg-red' : 'bg-blue-400';
+            const color = val === 'Green' ? 'bg-green' : val === 'Yellow' ? 'bg-amber' : val === 'Red' ? 'bg-red' : 'bg-accent';
             return (
               <div key={key} className="flex items-center gap-2 bg-navy-card border border-border rounded p-2">
                 <div className={`w-2 h-2 rounded-full ${color} shadow-[0_0_8px_rgba(0,0,0,0.5)]`} />

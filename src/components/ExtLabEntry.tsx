@@ -21,8 +21,8 @@ export function ExtLabEntry() {
   return (
     <div className="p-[18px_22px]">
       <div className="bg-navy-card border border-border rounded-lg p-3.5 max-w-2xl mx-auto">
-        <div className="font-condensed font-bold text-[13px] tracking-[1.5px] uppercase text-purple-400 mb-3.5 pb-2 border-b border-border">🔬 External Lab Test Data Entry</div>
-        <div className="bg-purple-500/5 border border-purple-500/20 rounded-md p-[10px_12px] text-[10px] text-text-muted mb-3.5">Manage external lab test certifications and their expiry dates.</div>
+        <div className="font-condensed font-bold text-[13px] tracking-[1.5px] uppercase text-accent mb-3.5 pb-2 border-b border-border">🔬 External Lab Test Data Entry</div>
+        <div className="bg-accent/5 border border-accent/20 rounded-md p-[10px_12px] text-[10px] text-text-muted mb-3.5">Manage external lab test certifications and their expiry dates.</div>
         
         <div className="grid grid-cols-2 gap-2.5 mb-2.5">
           <div className="flex flex-col gap-1"><label className="text-[9px] text-text-muted font-medium">Label *</label><input type="text" className="finp" placeholder="e.g. BCSIR (Water)" value={elLabel} onChange={e => setElLabel(e.target.value)} /></div>
@@ -39,7 +39,7 @@ export function ExtLabEntry() {
         
         <div className="flex gap-2.5 justify-end">
           <button className="border border-border bg-transparent text-text-muted rounded px-3 py-1.5 text-[11px] font-semibold cursor-pointer transition-all hover:border-accent hover:text-accent" onClick={() => {setElId(''); setElLabel(''); setElExpiry('');}}>Clear</button>
-          <button className="border-none bg-purple-600 text-white rounded px-3 py-1.5 text-[11px] font-semibold cursor-pointer transition-all hover:bg-purple-500" onClick={handleSaveExtLab}>💾 Save Lab Test</button>
+          <button className="border-none bg-accent text-white rounded px-3 py-1.5 text-[11px] font-semibold cursor-pointer transition-all hover:bg-accent/80" onClick={handleSaveExtLab}>💾 Save Lab Test</button>
         </div>
 
         <div className="mt-4 pt-3.5 border-t border-border">
@@ -56,8 +56,8 @@ export function ExtLabEntry() {
                       <td>{r.label}</td><td>{r.expiry}</td>
                       <td className={status === 'valid' ? 'text-green' : 'text-red'}>{status.toUpperCase()}</td>
                       <td>
-                        <button className="border-none bg-blue-600 text-white rounded px-2 py-1 text-[10px] font-semibold cursor-pointer transition-all hover:bg-blue-500 mr-1" onClick={() => { setElId(r.id); setElLabel(r.label); setElExpiry(r.expiry); }}>✎</button>
-                        <button className="border-none bg-red text-white rounded px-2 py-1 text-[10px] font-semibold cursor-pointer transition-all hover:bg-red-600" onClick={() => { if(confirm('Delete?')) deleteExtLabEntry(r.id); }}>✕</button>
+                        <button className="border-none bg-accent text-white rounded px-2 py-1 text-[10px] font-semibold cursor-pointer transition-all hover:bg-accent/80 mr-1" onClick={() => { setElId(r.id); setElLabel(r.label); setElExpiry(r.expiry); }}>✎</button>
+                        <button className="border-none bg-red text-white rounded px-2 py-1 text-[10px] font-semibold cursor-pointer transition-all hover:bg-red/80" onClick={() => { if(confirm('Delete?')) deleteExtLabEntry(r.id); }}>✕</button>
                       </td>
                     </tr>
                   );

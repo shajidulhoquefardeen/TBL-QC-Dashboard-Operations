@@ -30,7 +30,7 @@ export function DoeEntry() {
   return (
     <div className="p-6">
       <div className="bg-navy-card border border-border rounded-lg p-5 max-w-4xl mx-auto">
-        <div className="font-condensed font-bold text-[13px] tracking-[1.5px] uppercase text-teal-400 mb-4 pb-2 border-b border-border flex items-center gap-2">
+        <div className="font-condensed font-bold text-[13px] tracking-[1.5px] uppercase text-teal mb-4 pb-2 border-b border-border flex items-center gap-2">
           🌍 Environment (DOE)
         </div>
         
@@ -65,7 +65,7 @@ export function DoeEntry() {
         </div>
 
         <div className="flex justify-end mt-6">
-          <button className="border-none bg-teal-600 text-white rounded px-6 py-2 text-[11px] font-bold uppercase tracking-widest cursor-pointer transition-all hover:bg-teal-500 shadow-lg" onClick={handleSave}>💾 Save DOE Data</button>
+          <button className="border-none bg-teal text-white rounded px-6 py-2 text-[11px] font-bold uppercase tracking-widest cursor-pointer transition-all hover:bg-teal/80 shadow-lg" onClick={handleSave}>💾 Save DOE Data</button>
         </div>
       </div>
     </div>

@@ -22,30 +22,30 @@ export function Records() {
   const resetFilter = () => setFilter({from: '', to: '', line: '', chem: '', flav: '', st: ''});
 
   return (
-    <div style={{ padding: '18px 22px' }}>
-      <div style={{ display: 'flex', gap: '9px', flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: '12px' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-          <div style={{ fontSize: '8px', color: 'rgba(255, 255, 255, 0.5)' }}>From</div>
+    <div className="p-[18px_22px]">
+      <div className="flex gap-[9px] flex-wrap items-end mb-3">
+        <div className="flex flex-col gap-[3px]">
+          <div className="text-[8px] text-text-muted">From</div>
           <input 
             type="date" 
-            style={{ backgroundColor: '#0F172A', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '4px', padding: '4px 8px', color: '#FFFFFF', fontSize: '10px', fontFamily: 'sans-serif', outline: 'none' }} 
+            className="bg-navy-card border border-border rounded px-2 py-1 text-text text-[10px] font-sans outline-none" 
             value={filter.from} 
             onChange={e => setFilter({...filter, from: e.target.value})} 
           />
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-          <div style={{ fontSize: '8px', color: 'rgba(255, 255, 255, 0.5)' }}>To</div>
+        <div className="flex flex-col gap-[3px]">
+          <div className="text-[8px] text-text-muted">To</div>
           <input 
             type="date" 
-            style={{ backgroundColor: '#0F172A', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '4px', padding: '4px 8px', color: '#FFFFFF', fontSize: '10px', fontFamily: 'sans-serif', outline: 'none' }} 
+            className="bg-navy-card border border-border rounded px-2 py-1 text-text text-[10px] font-sans outline-none" 
             value={filter.to} 
             onChange={e => setFilter({...filter, to: e.target.value})} 
           />
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-          <div style={{ fontSize: '8px', color: 'rgba(255, 255, 255, 0.5)' }}>Line</div>
+        <div className="flex flex-col gap-[3px]">
+          <div className="text-[8px] text-text-muted">Line</div>
           <select 
-            style={{ backgroundColor: '#0F172A', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '4px', padding: '4px 8px', color: '#FFFFFF', fontSize: '10px', fontFamily: 'sans-serif', outline: 'none' }} 
+            className="bg-navy-card border border-border rounded px-2 py-1 text-text text-[10px] font-sans outline-none" 
             value={filter.line} 
             onChange={e => setFilter({...filter, line: e.target.value})}
           >
@@ -53,10 +53,10 @@ export function Records() {
             {LINES.map(l => <option key={l} value={l}>{l}</option>)}
           </select>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-          <div style={{ fontSize: '8px', color: 'rgba(255, 255, 255, 0.5)' }}>Chemist</div>
+        <div className="flex flex-col gap-[3px]">
+          <div className="text-[8px] text-text-muted">Chemist</div>
           <select 
-            style={{ backgroundColor: '#0F172A', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '4px', padding: '4px 8px', color: '#FFFFFF', fontSize: '10px', fontFamily: 'sans-serif', outline: 'none' }} 
+            className="bg-navy-card border border-border rounded px-2 py-1 text-text text-[10px] font-sans outline-none" 
             value={filter.chem} 
             onChange={e => setFilter({...filter, chem: e.target.value})}
           >
@@ -64,10 +64,10 @@ export function Records() {
             {CHEMISTS.map(c => <option key={c} value={c}>{c}</option>)}
           </select>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-          <div style={{ fontSize: '8px', color: 'rgba(255, 255, 255, 0.5)' }}>Flavour</div>
+        <div className="flex flex-col gap-[3px]">
+          <div className="text-[8px] text-text-muted">Flavour</div>
           <select 
-            style={{ backgroundColor: '#0F172A', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '4px', padding: '4px 8px', color: '#FFFFFF', fontSize: '10px', fontFamily: 'sans-serif', outline: 'none' }} 
+            className="bg-navy-card border border-border rounded px-2 py-1 text-text text-[10px] font-sans outline-none" 
             value={filter.flav} 
             onChange={e => setFilter({...filter, flav: e.target.value})}
           >
@@ -75,10 +75,10 @@ export function Records() {
             {FLAVOURS.map(f => <option key={f} value={f}>{f}</option>)}
           </select>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-          <div style={{ fontSize: '8px', color: 'rgba(255, 255, 255, 0.5)' }}>Status</div>
+        <div className="flex flex-col gap-[3px]">
+          <div className="text-[8px] text-text-muted">Status</div>
           <select 
-            style={{ backgroundColor: '#0F172A', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '4px', padding: '4px 8px', color: '#FFFFFF', fontSize: '10px', fontFamily: 'sans-serif', outline: 'none' }} 
+            className="bg-navy-card border border-border rounded px-2 py-1 text-text text-[10px] font-sans outline-none" 
             value={filter.st} 
             onChange={e => setFilter({...filter, st: e.target.value})}
           >
@@ -90,27 +90,27 @@ export function Records() {
           </select>
         </div>
         <button 
-          style={{ border: 'none', backgroundColor: '#004B93', color: '#FFFFFF', borderRadius: '4px', padding: '3px 9px', fontSize: '10px', fontWeight: 600, cursor: 'pointer' }} 
+          className="border-none bg-pepsi text-white rounded px-2 py-1 text-[10px] font-semibold cursor-pointer" 
           onClick={() => {}}
         >
           Filter
         </button>
         <button 
-          style={{ border: '1px solid rgba(255, 255, 255, 0.1)', backgroundColor: 'transparent', color: 'rgba(255, 255, 255, 0.5)', borderRadius: '4px', padding: '3px 9px', fontSize: '10px', fontWeight: 600, cursor: 'pointer' }} 
+          className="border border-border bg-transparent text-text-muted rounded px-2 py-1 text-[10px] font-semibold cursor-pointer" 
           onClick={resetFilter}
         >
           Reset
         </button>
       </div>
 
-      <div style={{ fontSize: '8px', color: 'rgba(255, 255, 255, 0.3)', marginBottom: '6px' }}>
-        Indicators → <span style={{ color: '#22C55E' }}>✔ Done</span> &nbsp;
-        <span style={{ color: '#EF4444' }}>✖ Missing</span> &nbsp;
-        <span style={{ color: '#F59E0B' }}>⏳ Pending</span>
+      <div className="text-[8px] text-text-dim mb-1.5">
+        Indicators → <span className="text-green">✔ Done</span> &nbsp;
+        <span className="text-red">✖ Missing</span> &nbsp;
+        <span className="text-amber">⏳ Pending</span>
       </div>
 
-      <div style={{ backgroundColor: '#0F172A', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '8px', padding: '14px' }}>
-        <div style={{ overflowX: 'auto', maxHeight: '520px', overflowY: 'auto' }}>
+      <div className="bg-navy-card border border-border rounded-lg p-3.5">
+        <div className="overflow-x-auto max-h-[520px] overflow-y-auto">
           <table className="dt">
             <thead>
               <tr>
@@ -127,10 +127,10 @@ export function Records() {
                 const hasMicro = r.tpc !== undefined && r.tpc !== null && r.tpc !== '';
 
                 return (
-                  <tr key={r.id} style={st.code === 'micro_due' ? { backgroundColor: 'rgba(245, 158, 11, 0.05)' } : {}}>
+                  <tr key={r.id} className={st.code === 'micro_due' ? 'bg-amber/5' : ''}>
                     <td className="d">{i+1}</td>
                     <td>{r.date || '—'}</td>
-                    <td style={{ fontFamily: 'monospace', fontSize: '9px' }}>{r.batchNo || '—'}</td>
+                    <td className="font-mono text-[9px]">{r.batchNo || '—'}</td>
                     <td><strong>{r.line?.replace('Line ','') || '?'}</strong></td>
                     <td className="d">{r.shift || '—'}</td>
                     <td>{r.chemistStartup || '—'}</td>
@@ -138,88 +138,33 @@ export function Records() {
                     <td>{r.flavour || '—'}</td>
                     <td className="d">{r.sku || '—'}ml</td>
                     <td>
-                      <span style={{ 
-                        display: 'inline-flex', 
-                        alignItems: 'center', 
-                        gap: '3px', 
-                        fontSize: '8px', 
-                        fontWeight: 'bold', 
-                        letterSpacing: '0.5px', 
-                        padding: '2px 6px', 
-                        borderRadius: '3px',
-                        ...st.style
-                      }}>
+                      <span className={`inline-flex items-center gap-[3px] text-[8px] font-bold tracking-[0.5px] px-1.5 py-0.5 rounded-[3px] ${st.cls}`}>
                         {st.lbl}
                       </span>
                     </td>
-                    <td style={{ color: yieldColor(yld.yieldPct), fontFamily: 'inherit', fontWeight: 'bold', fontSize: '13px' }}>{yP}</td>
+                    <td className={`${yieldColor(yld.yieldPct)} font-bold text-[13px]`}>{yP}</td>
                     <td className="d">{yld.totalSyr > 0 ? yld.totalSyr.toFixed(0) : r.lineSyrupVol || '—'}</td>
                     <td className="d">{yld.totalFG > 0 ? yld.totalFG : '—'}</td>
                     <td>
-                      <div style={{ 
-                        width: '14px', 
-                        height: '14px', 
-                        borderRadius: '3px', 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        justifyContent: 'center', 
-                        fontSize: '8px', 
-                        fontWeight: 'bold', 
-                        flexShrink: 0,
-                        backgroundColor: hasSyr ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)',
-                        color: hasSyr ? '#22C55E' : '#EF4444'
-                      }}>
+                      <div className={`w-3.5 h-3.5 rounded-[3px] flex items-center justify-center text-[8px] font-bold shrink-0 ${hasSyr ? 'bg-green/20 text-green' : 'bg-red/20 text-red'}`}>
                         {hasSyr ? '✔' : '✖'}
                       </div>
                     </td>
                     <td>
-                      <div style={{ 
-                        width: '14px', 
-                        height: '14px', 
-                        borderRadius: '3px', 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        justifyContent: 'center', 
-                        fontSize: '8px', 
-                        fontWeight: 'bold', 
-                        flexShrink: 0,
-                        backgroundColor: hasFG ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)',
-                        color: hasFG ? '#22C55E' : '#EF4444'
-                      }}>
+                      <div className={`w-3.5 h-3.5 rounded-[3px] flex items-center justify-center text-[8px] font-bold shrink-0 ${hasFG ? 'bg-green/20 text-green' : 'bg-red/20 text-red'}`}>
                         {hasFG ? '✔' : '✖'}
                       </div>
                     </td>
                     <td>
-                      <div style={{ 
-                        width: '14px', 
-                        height: '14px', 
-                        borderRadius: '3px', 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        justifyContent: 'center', 
-                        fontSize: '8px', 
-                        fontWeight: 'bold', 
-                        flexShrink: 0,
-                        backgroundColor: hasMicro ? 'rgba(34, 197, 94, 0.2)' : st.code === 'micro_due' ? 'rgba(239, 68, 68, 0.2)' : 'rgba(245, 158, 11, 0.15)',
-                        color: hasMicro ? '#22C55E' : st.code === 'micro_due' ? '#EF4444' : '#F59E0B'
-                      }}>
+                      <div className={`w-3.5 h-3.5 rounded-[3px] flex items-center justify-center text-[8px] font-bold shrink-0 ${hasMicro ? 'bg-green/20 text-green' : st.code === 'micro_due' ? 'bg-red/20 text-red' : 'bg-amber/15 text-amber'}`}>
                         {hasMicro ? '✔' : st.code === 'micro_due' ? '✖' : '⏳'}
                       </div>
                     </td>
-                    <td style={{ maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '9px' }} title={r.remarks || ''}>{r.remarks || '—'}</td>
-                    <td style={{ display: 'flex', gap: '4px' }}>
+                    <td className="max-w-[120px] overflow-hidden text-ellipsis whitespace-nowrap text-[9px]" title={r.remarks || ''}>{r.remarks || '—'}</td>
+                    <td className="flex gap-1">
                       {role === 'superadmin' && (
                         <button 
-                          style={{ 
-                            border: 'none', 
-                            borderRadius: '4px', 
-                            padding: '4px 8px', 
-                            fontSize: '10px', 
-                            fontWeight: 600, 
-                            cursor: 'pointer',
-                            backgroundColor: r.isLocked ? '#D97706' : '#475569',
-                            color: '#FFFFFF'
-                          }}
+                          className={`border-none rounded px-2 py-1 text-[10px] font-semibold cursor-pointer text-white ${r.isLocked ? 'bg-amber' : 'bg-slate-600'}`}
                           onClick={() => toggleRunLock(r.id)}
                           title={r.isLocked ? 'Unlock' : 'Lock'}
                         >
@@ -227,34 +172,14 @@ export function Records() {
                         </button>
                       )}
                       <button 
-                        style={{ 
-                          border: 'none', 
-                          borderRadius: '4px', 
-                          padding: '4px 8px', 
-                          fontSize: '10px', 
-                          fontWeight: 600,
-                          backgroundColor: r.isLocked && role !== 'superadmin' ? '#4B5563' : '#004B93',
-                          cursor: r.isLocked && role !== 'superadmin' ? 'not-allowed' : 'pointer',
-                          opacity: r.isLocked && role !== 'superadmin' ? 0.5 : 1,
-                          color: '#FFFFFF'
-                        }} 
+                        className={`border-none rounded px-2 py-1 text-[10px] font-semibold text-white ${r.isLocked && role !== 'superadmin' ? 'bg-gray-600 cursor-not-allowed opacity-50' : 'bg-pepsi cursor-pointer'}`} 
                         onClick={() => { if(!r.isLocked || role === 'superadmin') openModal(r.id); }}
                         disabled={r.isLocked && role !== 'superadmin'}
                       >
                         Edit
                       </button>
                       <button 
-                        style={{ 
-                          border: 'none', 
-                          borderRadius: '4px', 
-                          padding: '4px 8px', 
-                          fontSize: '10px', 
-                          fontWeight: 600,
-                          backgroundColor: r.isLocked && role !== 'superadmin' ? '#4B5563' : '#EF4444',
-                          cursor: r.isLocked && role !== 'superadmin' ? 'not-allowed' : 'pointer',
-                          opacity: r.isLocked && role !== 'superadmin' ? 0.5 : 1,
-                          color: '#FFFFFF'
-                        }} 
+                        className={`border-none rounded px-2 py-1 text-[10px] font-semibold text-white ${r.isLocked && role !== 'superadmin' ? 'bg-gray-600 cursor-not-allowed opacity-50' : 'bg-red cursor-pointer'}`} 
                         onClick={() => { if((!r.isLocked || role === 'superadmin') && confirm('Delete this run?')) deleteRun(r.id); }}
                         disabled={r.isLocked && role !== 'superadmin'}
                       >
@@ -264,13 +189,13 @@ export function Records() {
                   </tr>
                 );
               }) : (
-                <tr><td colSpan={26}><div style={{ textAlign: 'center', padding: '36px', color: 'rgba(255, 255, 255, 0.3)' }}><div style={{ fontSize: '32px', marginBottom: '8px' }}>📋</div><p>No records. Add runs or load sample data.</p></div></td></tr>
+                <tr><td colSpan={26}><div className="text-center p-9 text-text-dim"><div className="text-[32px] mb-2">📋</div><p>No records. Add runs or load sample data.</p></div></td></tr>
               )}
             </tbody>
           </table>
         </div>
       </div>
-      <div style={{ fontSize: '9px', color: 'rgba(255, 255, 255, 0.3)', marginTop: '6px', paddingTop: '6px', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
+      <div className="text-[9px] text-text-dim mt-1.5 pt-1.5 border-t border-border">
         Showing {filteredRuns.length} / {runs.length} &nbsp;|&nbsp; Micro Due: {filteredRuns.filter(r => getStatus(r).code === 'micro_due').length} &nbsp;|&nbsp; Closed: {filteredRuns.filter(r => getStatus(r).code === 'closed').length}
       </div>
     </div>

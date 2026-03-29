@@ -132,7 +132,7 @@ export function Certs() {
         {isAdminOrSuper && (
           <button 
             onClick={() => setIsAdding(!isAdding)}
-            className="bg-green text-white font-condensed font-bold py-2 px-4 rounded-md text-xs uppercase tracking-wider hover:bg-green-600 transition-colors shadow-lg"
+            className="bg-green text-white font-condensed font-bold py-2 px-4 rounded-md text-xs uppercase tracking-wider hover:bg-green/80 transition-colors shadow-lg"
           >
             {isAdding ? 'Cancel' : '+ Add New Certificate'}
           </button>
@@ -319,7 +319,7 @@ export function Certs() {
                   deleteCert(confirmDeleteId);
                   setConfirmDeleteId(null);
                 }}
-                className="flex-1 bg-red text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider hover:bg-red-600 transition-colors"
+                className="flex-1 bg-red text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider hover:bg-red/80 transition-colors"
               >
                 Remove Now
               </button>

@@ -53,6 +53,8 @@ interface AppContextType extends AppState {
   clearAll: () => Promise<void>;
   loadSampleData: () => Promise<void>;
   importCSV: (runs: Run[]) => Promise<void>;
+  theme: 'dark' | 'light';
+  setTheme: (theme: 'dark' | 'light') => void;
   customSettings: any;
   updateCustomSetting: (key: string, value: string) => void;
   removeCustomSetting: (key: string, value: string) => void;
@@ -73,12 +75,35 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [financialHistory, setFinancialHistory] = useState<FinancialHistoryEntry[]>([]);
   const [plantMetrics, setPlantMetrics] = useState<PlantMetrics | null>(null);
   const [customSettings, setCustomSettings] = useState<any>({ lines: [], flavours: [], chemists: [], skus: [], shifts: [], deviations: [], coliforms: [], microResults: [] });
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [currentView, setCurrentView] = useState('qc');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [prefillLine, setPrefillLine] = useState<string | null>(null);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [toastType, setToastType] = useState('');
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('tbl_theme') as 'dark' | 'light';
+    if (savedTheme) {
+      setTheme(savedTheme);
+      if (savedTheme === 'light') {
+        document.documentElement.classList.add('light');
+      } else {
+        document.documentElement.classList.remove('light');
+      }
+    }
+  }, []);
+
+  const handleSetTheme = (newTheme: 'dark' | 'light') => {
+    setTheme(newTheme);
+    localStorage.setItem('tbl_theme', newTheme);
+    if (newTheme === 'light') {
+      document.documentElement.classList.add('light');
+    } else {
+      document.documentElement.classList.remove('light');
+    }
+  };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -666,7 +691,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   return (
     <AppContext.Provider value={{
-      user, role, isAuthReady,
+      user, role, isAuthReady, theme, setTheme: handleSetTheme,
       runs, sugarData, concData, dfData, extLabData, certsData, financialHistory, plantMetrics, currentView, setCurrentView,
       isModalOpen, openModal, closeModal, editId, prefillLine,
       saveRun, deleteRun, toggleRunLock, saveSugarEntry, deleteSugarEntry,

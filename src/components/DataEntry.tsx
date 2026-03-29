@@ -24,7 +24,7 @@ export function DataEntry() {
   ];
 
   return (
-    <div className="flex h-full bg-[#0a0e17]">
+    <div className="flex h-full bg-navy">
       <div className="flex flex-col flex-1 min-w-0">
         <div className="bg-navy-mid border-b border-border px-6 pt-4 flex gap-6 shrink-0 overflow-x-auto no-scrollbar">
           {tabs.map(tab => (

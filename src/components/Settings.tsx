@@ -66,7 +66,7 @@ export function Settings() {
           </div>
         ) : (
           <>
-            <div className="bg-amber-500/5 border border-amber-500/20 rounded-md p-[10px_12px] text-[10px] text-text-muted mb-4">
+            <div className="bg-amber/5 border border-amber/20 rounded-md p-[10px_12px] text-[10px] text-text-muted mb-4">
               <strong className="text-amber">Warning:</strong> These actions directly affect the cloud database. Please proceed with caution.
             </div>
             
@@ -78,11 +78,11 @@ export function Settings() {
                 {showLoadConfirm ? (
                   <div className="mt-auto flex gap-2 items-center bg-navy-card p-2 rounded border border-border">
                     <span className="text-[10px] text-text">Are you sure?</span>
-                    <button className="bg-accent text-white rounded px-2 py-1 text-[10px] font-semibold hover:bg-blue-600" onClick={() => { loadSampleData(); setShowLoadConfirm(false); }}>Yes, Load</button>
+                    <button className="bg-accent text-white rounded px-2 py-1 text-[10px] font-semibold hover:bg-accent/80" onClick={() => { loadSampleData(); setShowLoadConfirm(false); }}>Yes, Load</button>
                     <button className="bg-transparent border border-border text-text-muted rounded px-2 py-1 text-[10px] hover:text-text" onClick={() => setShowLoadConfirm(false)}>Cancel</button>
                   </div>
                 ) : (
-                  <button className="border-none bg-accent text-white rounded px-3 py-2 text-[11px] font-semibold cursor-pointer transition-all hover:bg-blue-600 self-start mt-auto" onClick={() => setShowLoadConfirm(true)}>Load Samples</button>
+                  <button className="border-none bg-accent text-white rounded px-3 py-2 text-[11px] font-semibold cursor-pointer transition-all hover:bg-accent/80 self-start mt-auto" onClick={() => setShowLoadConfirm(true)}>Load Samples</button>
                 )}
               </div>
 

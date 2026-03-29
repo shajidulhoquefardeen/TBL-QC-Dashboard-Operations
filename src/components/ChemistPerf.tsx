@@ -7,7 +7,7 @@ import { FLAVOUR_COLOR } from '../constants';
 Chart.register(...registerables);
 
 export function ChemistPerf() {
-  const { runs, customSettings } = useAppContext();
+  const { runs, customSettings, theme } = useAppContext();
   const [filter, setFilter] = useState({
     from: (() => { const d=new Date(); d.setDate(d.getDate()-30); return d.toISOString().slice(0,10); })(),
     to: new Date().toISOString().slice(0,10),
@@ -37,6 +37,9 @@ export function ChemistPerf() {
     let trendChart: Chart | null = null;
     let flavourChart: Chart | null = null;
 
+    const gridColor = theme === 'dark' ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.02)';
+    const textColor = theme === 'dark' ? '#64748b' : '#94a3b8';
+
     if (selectedChem && selRuns.length > 0) {
       if (trendChartRef.current) {
         const last30 = selRuns.slice(-30);
@@ -45,16 +48,16 @@ export function ChemistPerf() {
           data: {
             labels: last30.map(r => r.date?.slice(5) || ''),
             datasets: [
-              { label: 'Yield %', data: last30.map(r => calcYield(r).yieldPct.toFixed(2)), borderColor: '#00bcd4', backgroundColor: '#00bcd418', tension: 0.4, fill: true, pointRadius: 2, borderWidth: 2 },
-              { label: '100%', data: Array(last30.length).fill(100), borderColor: 'rgba(255,255,255,.3)', borderDash: [4, 3], borderWidth: 1, pointRadius: 0, fill: false }
+              { label: 'Yield %', data: last30.map(r => calcYield(r).yieldPct.toFixed(2)), borderColor: '#06b6d4', backgroundColor: '#06b6d418', tension: 0.4, fill: true, pointRadius: 2, borderWidth: 2 },
+              { label: '100%', data: Array(last30.length).fill(100), borderColor: theme === 'dark' ? 'rgba(255,255,255,.3)' : 'rgba(0,0,0,.3)', borderDash: [4, 3], borderWidth: 1, pointRadius: 0, fill: false }
             ]
           },
           options: {
             responsive: true, maintainAspectRatio: false,
             plugins: { legend: { display: false } },
             scales: {
-              x: { ticks: { color: '#6a8fc0', font: { size: 8 } }, grid: { color: 'rgba(26,48,96,.7)' } },
-              y: { min: 94, max: 108, ticks: { color: '#6a8fc0', font: { size: 8 } }, grid: { color: 'rgba(26,48,96,.7)' } }
+              x: { ticks: { color: textColor, font: { size: 8 } }, grid: { color: gridColor } },
+              y: { min: 94, max: 108, ticks: { color: textColor, font: { size: 8 } }, grid: { color: gridColor } }
             }
           }
         });
@@ -68,11 +71,11 @@ export function ChemistPerf() {
           type: 'doughnut',
           data: {
             labels: fKeys,
-            datasets: [{ data: fKeys.map(k => flavMap[k]), backgroundColor: fKeys.map(k => (FLAVOUR_COLOR[k] || '#00bcd4') + 'cc'), borderWidth: 1 }]
+            datasets: [{ data: fKeys.map(k => flavMap[k]), backgroundColor: fKeys.map(k => (FLAVOUR_COLOR[k] || '#06b6d4') + 'cc'), borderWidth: 1, borderColor: theme === 'dark' ? '#1e293b' : '#ffffff' }]
           },
           options: {
             responsive: true, maintainAspectRatio: false,
-            plugins: { legend: { display: true, labels: { color: '#6a8fc0', font: { size: 8 }, boxWidth: 9, padding: 6 } } }
+            plugins: { legend: { display: true, labels: { color: textColor, font: { size: 8 }, boxWidth: 9, padding: 6 } } }
           }
         });
       }
@@ -82,7 +85,7 @@ export function ChemistPerf() {
       if (trendChart) trendChart.destroy();
       if (flavourChart) flavourChart.destroy();
     };
-  }, [selectedChem, selRuns]);
+  }, [selectedChem, selRuns, theme]);
 
   const yields = selRuns.map(r => calcYield(r).yieldPct);
   const avg = avgYield(selRuns);
@@ -95,7 +98,7 @@ export function ChemistPerf() {
         <div className="flex flex-col gap-[3px]"><div className="text-[8px] text-text-muted">From Date</div><input type="date" className="bg-navy-card border border-border rounded px-2 py-1 text-text text-[10px] font-sans outline-none focus:border-accent" value={filter.from} onChange={e => setFilter({...filter, from: e.target.value})} /></div>
         <div className="flex flex-col gap-[3px]"><div className="text-[8px] text-text-muted">To Date</div><input type="date" className="bg-navy-card border border-border rounded px-2 py-1 text-text text-[10px] font-sans outline-none focus:border-accent" value={filter.to} onChange={e => setFilter({...filter, to: e.target.value})} /></div>
         <div className="flex flex-col gap-[3px]"><div className="text-[8px] text-text-muted">Role</div><select className="bg-navy-card border border-border rounded px-2 py-1 text-text text-[10px] font-sans outline-none focus:border-accent" value={filter.role} onChange={e => setFilter({...filter, role: e.target.value})}><option value="both">All Roles</option><option value="startup">Startup Chemist</option><option value="endup">Endup Chemist</option></select></div>
-        <button className="border-none bg-pepsi text-white rounded px-[9px] py-[3px] text-[10px] font-semibold cursor-pointer transition-all hover:bg-blue-600" onClick={() => {}}>Apply Filter</button>
+        <button className="border-none bg-pepsi text-white rounded px-[9px] py-[3px] text-[10px] font-semibold cursor-pointer transition-all hover:bg-pepsi/80" onClick={() => {}}>Apply Filter</button>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 mb-3.5">
