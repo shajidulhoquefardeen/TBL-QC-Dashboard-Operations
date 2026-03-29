@@ -4,10 +4,11 @@ import { calcYield, getStatus, yieldColor } from '../utils';
 import { CHEMISTS, FLAVOURS, LINES } from '../constants';
 
 export function Records() {
-  const { runs, openModal, deleteRun, role, toggleRunLock } = useAppContext();
+  const { runs, openModal, deleteRun, role, toggleRunLock, showToast } = useAppContext();
   const [filter, setFilter] = useState({
     from: '', to: '', line: '', chem: '', flav: '', st: ''
   });
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const filteredRuns = runs.filter(r => {
     if(filter.from && r.date < filter.from) return false;
@@ -171,20 +172,40 @@ export function Records() {
                           {r.isLocked ? '🔓' : '🔒'}
                         </button>
                       )}
-                      <button 
-                        className={`border-none rounded px-2 py-1 text-[10px] font-semibold text-white ${r.isLocked && role !== 'superadmin' ? 'bg-gray-600 cursor-not-allowed opacity-50' : 'bg-pepsi cursor-pointer'}`} 
-                        onClick={() => { if(!r.isLocked || role === 'superadmin') openModal(r.id); }}
-                        disabled={r.isLocked && role !== 'superadmin'}
-                      >
-                        Edit
-                      </button>
-                      <button 
-                        className={`border-none rounded px-2 py-1 text-[10px] font-semibold text-white ${r.isLocked && role !== 'superadmin' ? 'bg-gray-600 cursor-not-allowed opacity-50' : 'bg-red cursor-pointer'}`} 
-                        onClick={() => { if((!r.isLocked || role === 'superadmin') && confirm('Delete this run?')) deleteRun(r.id); }}
-                        disabled={r.isLocked && role !== 'superadmin'}
-                      >
-                        ✕
-                      </button>
+                      
+                      {deletingId === r.id ? (
+                        <div className="flex gap-1 bg-red/10 p-1 rounded border border-red/20">
+                          <button 
+                            className="bg-red text-white rounded px-1.5 py-0.5 text-[9px] font-bold hover:bg-red/80"
+                            onClick={() => { deleteRun(r.id); setDeletingId(null); }}
+                          >
+                            Confirm
+                          </button>
+                          <button 
+                            className="bg-slate-600 text-white rounded px-1.5 py-0.5 text-[9px] font-bold hover:bg-slate-500"
+                            onClick={() => setDeletingId(null)}
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      ) : (
+                        <>
+                          <button 
+                            className={`border-none rounded px-2 py-1 text-[10px] font-semibold text-white ${r.isLocked && role !== 'superadmin' ? 'bg-gray-600 cursor-not-allowed opacity-50' : 'bg-pepsi cursor-pointer'}`} 
+                            onClick={() => { if(!r.isLocked || role === 'superadmin') openModal(r.id); }}
+                            disabled={r.isLocked && role !== 'superadmin'}
+                          >
+                            Edit
+                          </button>
+                          <button 
+                            className={`border-none rounded px-2 py-1 text-[10px] font-semibold text-white ${r.isLocked && role !== 'superadmin' ? 'bg-gray-600 cursor-not-allowed opacity-50' : 'bg-red cursor-pointer'}`} 
+                            onClick={() => { if(!r.isLocked || role === 'superadmin') setDeletingId(r.id); }}
+                            disabled={r.isLocked && role !== 'superadmin'}
+                          >
+                            ✕
+                          </button>
+                        </>
+                      )}
                     </td>
                   </tr>
                 );

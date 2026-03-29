@@ -72,6 +72,31 @@ service cloud.firestore {
              (data.ytd == null || data.ytd is number);
     }
 
+    function isValidTeamMember(data) {
+      return hasRequiredFields(['id', 'name', 'designation', 'updatedAt', 'uid']) &&
+             data.id is string && data.name is string && data.designation is string;
+    }
+
+    function isValidLegacyMember(data) {
+      return hasRequiredFields(['id', 'name', 'designation', 'tenure', 'updatedAt', 'uid']) &&
+             data.id is string && data.name is string && data.designation is string && data.tenure is string;
+    }
+
+    function isValidManagerQuote(data) {
+      return hasRequiredFields(['id', 'name', 'quote', 'updatedAt', 'uid']) &&
+             data.id is string && data.name is string && data.quote is string;
+    }
+
+    function isValidAchievementCard(data) {
+      return hasRequiredFields(['id', 'boldText', 'subText', 'updatedAt', 'uid']) &&
+             data.id is string && data.boldText is string && data.subText is string;
+    }
+
+    function isValidLandingConfig(data) {
+      return hasRequiredFields(['missionTitle', 'missionText', 'updatedAt']) &&
+             data.missionTitle is string && data.missionText is string;
+    }
+
     // ===============================================================
     // Rules
     // ===============================================================
@@ -111,6 +136,12 @@ service cloud.firestore {
       allow create, update, delete: if isAuthenticated();
     }
 
+    match /settings/landingConfig {
+      allow read: if isAuthenticated();
+      allow create, update: if isAuthenticated() && isValidLandingConfig(request.resource.data);
+      allow delete: if isAuthenticated();
+    }
+
     match /settings/{docId} {
       allow read: if isAuthenticated();
       allow create, update, delete: if isAuthenticated();
@@ -119,6 +150,30 @@ service cloud.firestore {
     match /financialHistory/{id} {
       allow read: if isAuthenticated();
       allow create, update, delete: if isAuthenticated();
+    }
+
+    match /teamMembers/{memberId} {
+      allow read: if isAuthenticated();
+      allow create, update: if isAuthenticated() && isValidTeamMember(request.resource.data);
+      allow delete: if isAuthenticated();
+    }
+
+    match /legacyMembers/{memberId} {
+      allow read: if isAuthenticated();
+      allow create, update: if isAuthenticated() && isValidLegacyMember(request.resource.data);
+      allow delete: if isAuthenticated();
+    }
+
+    match /managerQuotes/{quoteId} {
+      allow read: if isAuthenticated();
+      allow create, update: if isAuthenticated() && isValidManagerQuote(request.resource.data);
+      allow delete: if isAuthenticated();
+    }
+
+    match /achievementCards/{cardId} {
+      allow read: if isAuthenticated();
+      allow create, update: if isAuthenticated() && isValidAchievementCard(request.resource.data);
+      allow delete: if isAuthenticated();
     }
   }
 }

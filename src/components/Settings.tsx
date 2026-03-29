@@ -2,14 +2,17 @@ import React, { useState } from 'react';
 import { useAppContext } from '../store';
 
 export function Settings() {
-  const { clearAll, loadSampleData, importCSV, role } = useAppContext();
+  const { clearAll, loadSampleData, importCSV, role, showToast } = useAppContext();
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [showLoadConfirm, setShowLoadConfirm] = useState(false);
 
   const isSuperAdmin = role === 'superadmin';
 
   const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!isSuperAdmin) return;
+    if (!isSuperAdmin) {
+      showToast('Only Super Admin can import data', 'error');
+      return;
+    }
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
@@ -17,39 +20,125 @@ export function Settings() {
         const text = evt.target?.result as string;
         if (text) {
           try {
-            const lines = text.split('\n');
-            if (lines.length < 2) return;
-            const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+            const lines = text.split(/\r?\n/);
+            if (lines.length < 2) {
+              showToast('CSV file is empty or missing data', 'error');
+              return;
+            }
+
+            const rawHeaders = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+            // Normalize headers to match Run interface (camelCase)
+            const headers = rawHeaders.map(h => {
+              const lower = h.toLowerCase().replace(/[^a-z0-9]/g, '');
+              if (lower === 'id') return 'id';
+              if (lower === 'date') return 'date';
+              if (lower === 'shift') return 'shift';
+              if (lower === 'line') return 'line';
+              if (lower === 'batchno' || lower === 'batch_no') return 'batchNo';
+              if (lower === 'flavour' || lower === 'flavor') return 'flavour';
+              if (lower === 'sku') return 'sku';
+              if (lower === 'chemiststartup' || lower === 'chemist_startup') return 'chemistStartup';
+              if (lower === 'chemistendup' || lower === 'chemist_endup') return 'chemistEndup';
+              if (lower === 'linesyrupvol' || lower === 'line_syrup_vol') return 'lineSyrupVol';
+              if (lower === 'pmxamount' || lower === 'pmx_amount') return 'pmxAmount';
+              if (lower === 'linefg' || lower === 'line_fg') return 'lineFG';
+              if (lower === 'pmxfg' || lower === 'pmx_fg') return 'pmxFG';
+              if (lower === 'starttime' || lower === 'start_time') return 'startTime';
+              if (lower === 'endtime' || lower === 'end_time') return 'endTime';
+              if (lower === 'enddate' || lower === 'end_date') return 'endDate';
+              if (lower === 'tpc') return 'tpc';
+              if (lower === 'yeast') return 'yeast';
+              if (lower === 'mold') return 'mold';
+              if (lower === 'coliform') return 'coliform';
+              if (lower === 'microdate' || lower === 'micro_date') return 'microDate';
+              if (lower === 'microresult' || lower === 'micro_result') return 'microResult';
+              if (lower === 'deviation') return 'deviation';
+              if (lower === 'remarks') return 'remarks';
+              return h; // Fallback
+            });
+
             const importedRuns = [];
             for (let i = 1; i < lines.length; i++) {
-              if (!lines[i].trim()) continue;
-              const values = lines[i].split(',').map(v => v.trim().replace(/"/g, ''));
+              const line = lines[i].trim();
+              if (!line) continue;
+              
+              // Robust CSV splitting (handles quotes)
+              const values: string[] = [];
+              let current = '';
+              let inQuotes = false;
+              for (let charIdx = 0; charIdx < line.length; charIdx++) {
+                const char = line[charIdx];
+                if (char === '"') inQuotes = !inQuotes;
+                else if (char === ',' && !inQuotes) {
+                  values.push(current.trim());
+                  current = '';
+                } else current += char;
+              }
+              values.push(current.trim());
+
               const run: any = {};
               headers.forEach((h, idx) => {
-                run[h] = values[idx];
+                if (idx < values.length) {
+                  run[h] = values[idx].replace(/"/g, '');
+                }
               });
+
               // Basic validation/conversion
               if (run.id && run.date) {
+                // Normalize date to YYYY-MM-DD if possible
+                try {
+                  const d = new Date(run.date);
+                  if (!isNaN(d.getTime())) {
+                    run.date = d.toISOString().split('T')[0];
+                  }
+                } catch (e) {
+                  console.warn('Date normalization failed for', run.date);
+                }
+
                 run.sku = Number(run.sku) || 0;
                 run.lineSyrupVol = Number(run.lineSyrupVol) || 0;
                 run.pmxAmount = Number(run.pmxAmount) || 0;
                 run.lineFG = Number(run.lineFG) || 0;
                 run.pmxFG = Number(run.pmxFG) || 0;
+                
+                // Ensure required fields have defaults if missing
+                run.shift = run.shift || 'Day';
+                run.line = run.line || 'Line 1';
+                run.flavour = run.flavour || 'Pepsi';
+                run.batchNo = run.batchNo || `B-${Date.now()}`;
+                run.chemistStartup = run.chemistStartup || 'Unknown';
+                run.chemistEndup = run.chemistEndup || 'Unknown';
+                run.startTime = run.startTime || '07:00';
+                run.endTime = run.endTime || '15:00';
+                run.endDate = run.endDate || run.date;
+                run.coliform = run.coliform || 'Absent';
+                run.microResult = run.microResult || 'Pending';
+                run.deviation = run.deviation || 'None';
+                run.remarks = run.remarks || '';
+                run.createdAt = run.createdAt || new Date().toISOString();
+                run.updatedAt = new Date().toISOString();
+
+                // Final check for firestore rules compatibility
+                if (run.sku <= 0) run.sku = 1; // Rules require > 0
+
                 importedRuns.push(run);
               }
             }
+            console.log('Parsed imported runs:', importedRuns);
             if (importedRuns.length > 0) {
               importCSV(importedRuns);
             } else {
-              alert('No valid runs found in CSV.');
+              showToast('No valid runs found in CSV. Check "id" and "date" columns.', 'error');
             }
           } catch (err) {
             console.error('Error parsing CSV', err);
-            alert('Error parsing CSV file.');
+            showToast('Error parsing CSV file', 'error');
           }
         }
       };
       reader.readAsText(file);
+      // Reset input so same file can be selected again
+      e.target.value = '';
     }
   };
 
@@ -109,8 +198,8 @@ export function Settings() {
                   </div>
                   <button 
                     onClick={() => {
-                      const headers = "id,date,line,batchNo,flavour,sku,lineSyrupVol,pmxAmount,lineFG,pmxFG,shift,chemistStartup,chemistEndup,brixStartup,brixEndup,brixStandard,yieldPct,isLocked,isMicroDone,microDate,microResult";
-                      const sample = "run_123,2026-03-29,Line 1,B12345,Pepsi,250,1000,500,4000,2000,Day,Sajid,Fardeen,12.5,12.5,12.5,100,false,false,,";
+                      const headers = "id,date,shift,line,batchNo,flavour,sku,chemistStartup,chemistEndup,lineSyrupVol,pmxAmount,lineFG,pmxFG,startTime,endTime,endDate,tpc,yeast,mold,coliform,microDate,microResult,deviation,remarks";
+                      const sample = "run_123,2026-03-29,Day,Line 1,B12345,Pepsi,250,Sajid,Fardeen,1000,500,4000,2000,07:00,15:00,2026-03-29,0,0,0,Absent,2026-03-29,Pass,None,Sample Import";
                       const blob = new Blob([`${headers}\n${sample}`], { type: 'text/csv' });
                       const url = window.URL.createObjectURL(blob);
                       const a = document.createElement('a');

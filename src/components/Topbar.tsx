@@ -6,7 +6,7 @@ import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 
 export function Topbar() {
-  const { currentView, openModal, runs, logOut, role, theme, setTheme } = useAppContext();
+  const { currentView, openModal, runs, logOut, role, theme, setTheme, sidebarCollapsed, setSidebarCollapsed } = useAppContext();
   const [time, setTime] = useState('');
   const [showExportMenu, setShowExportMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -91,9 +91,11 @@ export function Topbar() {
 
   return (
     <div className="sticky top-0 z-50 backdrop-blur-md flex items-center justify-between px-5 py-2.5 bg-navy/95 border-b border-border">
-      <div>
-        <div className="font-condensed font-bold text-lg tracking-[1px] text-text">{PAGE[currentView]?.t || 'Dashboard'}</div>
-        <div className="text-[9px] text-text-muted">{PAGE[currentView]?.s || ''}</div>
+      <div className="flex items-center gap-3">
+        <div>
+          <div className="font-condensed font-bold text-lg tracking-[1px] text-text">{PAGE[currentView]?.t || 'Dashboard'}</div>
+          <div className="text-[9px] text-text-muted">{PAGE[currentView]?.s || ''}</div>
+        </div>
       </div>
       <div className="flex items-center gap-2.5">
         <button 

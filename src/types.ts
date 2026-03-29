@@ -112,6 +112,7 @@ export interface PlantConfig {
   deviations: string[];
   coliforms?: string[];
   microResults?: string[];
+  landingBgUrl?: string;
   updatedAt: string;
 }
 
@@ -122,4 +123,48 @@ export interface FinancialHistoryEntry {
   date: string;
   updatedAt: string;
   uid?: string;
+}
+
+export interface TeamMember {
+  id: string;
+  name: string;
+  designation: string;
+  photoUrl?: string;
+  updatedAt: string;
+  uid?: string;
+}
+
+export interface LegacyMember {
+  id: string;
+  name: string;
+  designation: string;
+  tenure: string;
+  photoUrl?: string;
+  updatedAt: string;
+  uid?: string;
+}
+
+export interface ManagerQuote {
+  id: 'plant_manager' | 'qc_manager';
+  name: string;
+  quote: string;
+  photoUrl?: string;
+  updatedAt: string;
+  uid?: string;
+}
+
+export interface AchievementCard {
+  id: string;
+  logoUrl?: string;
+  boldText: string;
+  subText: string;
+  updatedAt: string;
+  uid?: string;
+}
+
+export interface LandingPageConfig {
+  missionTitle: string;
+  missionText: string;
+  missionTextSecondary?: string;
+  updatedAt: string;
 }

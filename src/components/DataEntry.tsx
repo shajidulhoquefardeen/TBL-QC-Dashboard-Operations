@@ -7,7 +7,9 @@ import { PlantMetricsEntry } from './PlantMetricsEntry';
 import { AibQsEntry } from './AibQsEntry';
 import { BstiEntry } from './BstiEntry';
 import { DoeEntry } from './DoeEntry';
+import { LandingPageManagement } from './LandingPageManagement';
 import { DashboardPreview } from './DashboardPreview';
+import { TeamPreview } from './TeamPreview';
 
 export function DataEntry() {
   const [activeTab, setActiveTab] = useState('sugar');
@@ -21,6 +23,7 @@ export function DataEntry() {
     { id: 'bsti', label: '📜 BSTI Certs' },
     { id: 'doe', label: '🌍 Env. DOE' },
     { id: 'plantMetrics', label: '🏭 3C Score' },
+    { id: 'landing', label: '🏠 Landing Page' },
   ];
 
   return (
@@ -50,9 +53,10 @@ export function DataEntry() {
           {activeTab === 'bsti' && <BstiEntry />}
           {activeTab === 'doe' && <DoeEntry />}
           {activeTab === 'plantMetrics' && <PlantMetricsEntry />}
+          {activeTab === 'landing' && <LandingPageManagement />}
         </div>
       </div>
-      <DashboardPreview />
+      {activeTab === 'landing' ? <TeamPreview /> : <DashboardPreview />}
     </div>
   );
 }

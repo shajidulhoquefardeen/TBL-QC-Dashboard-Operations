@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Run, SyrupEntry, PlantMetrics, PlantConfig, PlantCertificate, FinancialHistoryEntry } from './types';
+import { Run, SyrupEntry, PlantMetrics, PlantConfig, PlantCertificate, FinancialHistoryEntry, TeamMember, LegacyMember, ManagerQuote, AchievementCard, LandingPageConfig } from './types';
 import { CHEMISTS, F15, LINES, FLAVOURS } from './constants';
 import { auth, db } from './firebase';
 import { onAuthStateChanged, signInAnonymously, signOut, User } from 'firebase/auth';
@@ -18,18 +18,25 @@ interface AppState {
   certsData: PlantCertificate[];
   financialHistory: FinancialHistoryEntry[];
   plantMetrics: PlantMetrics | null;
+  teamMembers: TeamMember[];
+  legacyMembers: LegacyMember[];
+  managerQuotes: ManagerQuote[];
+  achievementCards: AchievementCard[];
+  landingConfig: LandingPageConfig | null;
   currentView: string;
   isModalOpen: boolean;
   editId: string | null;
   toastMsg: string | null;
   toastType: string;
   prefillLine: string | null;
+  sidebarCollapsed: boolean;
 }
 
 interface AppContextType extends AppState {
   signIn: (username: string, password: string) => Promise<boolean>;
   logOut: () => void;
   setCurrentView: (view: string) => void;
+  setSidebarCollapsed: (collapsed: boolean) => void;
   openModal: (id?: string | null, line?: string | null) => void;
   closeModal: () => void;
   saveRun: (run: Run) => Promise<void>;
@@ -49,6 +56,14 @@ interface AppContextType extends AppState {
   deleteFinancialHistory: (id: string) => Promise<void>;
   savePlantMetrics: (metrics: PlantMetrics) => Promise<void>;
   savePlantConfig: (config: any) => Promise<void>;
+  saveTeamMember: (member: TeamMember) => Promise<void>;
+  deleteTeamMember: (id: string) => Promise<void>;
+  saveLegacyMember: (member: LegacyMember) => Promise<void>;
+  deleteLegacyMember: (id: string) => Promise<void>;
+  saveManagerQuote: (quote: ManagerQuote) => Promise<void>;
+  saveAchievementCard: (card: AchievementCard) => Promise<void>;
+  deleteAchievementCard: (id: string) => Promise<void>;
+  saveLandingConfig: (config: LandingPageConfig) => Promise<void>;
   showToast: (msg: string, type?: string) => void;
   clearAll: () => Promise<void>;
   loadSampleData: () => Promise<void>;
@@ -74,12 +89,29 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [certsData, setCertsData] = useState<PlantCertificate[]>([]);
   const [financialHistory, setFinancialHistory] = useState<FinancialHistoryEntry[]>([]);
   const [plantMetrics, setPlantMetrics] = useState<PlantMetrics | null>(null);
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [legacyMembers, setLegacyMembers] = useState<LegacyMember[]>([]);
+  const [managerQuotes, setManagerQuotes] = useState<ManagerQuote[]>([]);
+  const [achievementCards, setAchievementCards] = useState<AchievementCard[]>([]);
+  const [landingConfig, setLandingConfig] = useState<LandingPageConfig | null>(null);
   const [customSettings, setCustomSettings] = useState<any>({ lines: [], flavours: [], chemists: [], skus: [], shifts: [], deviations: [], coliforms: [], microResults: [] });
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
-  const [currentView, setCurrentView] = useState('qc');
+  const [currentView, setCurrentView] = useState('home');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [prefillLine, setPrefillLine] = useState<string | null>(null);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(window.innerWidth < 1024);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1024) {
+        setSidebarCollapsed(true);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [toastType, setToastType] = useState('');
 
@@ -260,6 +292,58 @@ export function AppProvider({ children }: { children: ReactNode }) {
       (error) => handleFirestoreError(error, OperationType.GET, 'settings/plantConfig')
     );
 
+    const unsubTeam = onSnapshot(
+      query(collection(db, 'teamMembers'), orderBy('updatedAt', 'desc')),
+      (snapshot) => {
+        const t: TeamMember[] = [];
+        snapshot.forEach((doc) => t.push(doc.data() as TeamMember));
+        setTeamMembers(t);
+      },
+      (error) => handleFirestoreError(error, OperationType.LIST, 'teamMembers')
+    );
+
+    const unsubLegacy = onSnapshot(
+      query(collection(db, 'legacyMembers'), orderBy('updatedAt', 'desc')),
+      (snapshot) => {
+        const l: LegacyMember[] = [];
+        snapshot.forEach((doc) => l.push(doc.data() as LegacyMember));
+        setLegacyMembers(l);
+      },
+      (error) => handleFirestoreError(error, OperationType.LIST, 'legacyMembers')
+    );
+
+    const unsubAchievementCards = onSnapshot(
+      query(collection(db, 'achievementCards'), orderBy('updatedAt', 'asc')),
+      (snapshot) => {
+        const c: AchievementCard[] = [];
+        snapshot.forEach((doc) => c.push(doc.data() as AchievementCard));
+        setAchievementCards(c);
+      },
+      (error) => handleFirestoreError(error, OperationType.LIST, 'achievementCards')
+    );
+
+    const unsubLandingConfig = onSnapshot(
+      doc(db, 'settings', 'landingConfig'),
+      (docSnap) => {
+        if (docSnap.exists()) {
+          setLandingConfig(docSnap.data() as LandingPageConfig);
+        } else {
+          setLandingConfig(null);
+        }
+      },
+      (error) => handleFirestoreError(error, OperationType.GET, 'settings/landingConfig')
+    );
+
+    const unsubQuotes = onSnapshot(
+      collection(db, 'managerQuotes'),
+      (snapshot) => {
+        const q: ManagerQuote[] = [];
+        snapshot.forEach((doc) => q.push(doc.data() as ManagerQuote));
+        setManagerQuotes(q);
+      },
+      (error) => handleFirestoreError(error, OperationType.LIST, 'managerQuotes')
+    );
+
     return () => {
       unsubRuns();
       unsubSugar();
@@ -270,6 +354,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
       unsubFinancialHistory();
       unsubPlantMetrics();
       unsubPlantConfig();
+      unsubTeam();
+      unsubLegacy();
+      unsubAchievementCards();
+      unsubLandingConfig();
+      unsubQuotes();
     };
   }, [isAuthReady, user]);
 
@@ -567,6 +656,86 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const saveTeamMember = async (member: TeamMember) => {
+    if (!user) return;
+    try {
+      await setDoc(doc(db, 'teamMembers', member.id), { ...member, uid: user.uid, updatedAt: new Date().toISOString() });
+      showToast('Team member saved');
+    } catch (error) {
+      handleFirestoreError(error, OperationType.WRITE, `teamMembers/${member.id}`);
+    }
+  };
+
+  const deleteTeamMember = async (id: string) => {
+    if (!user) return;
+    try {
+      await deleteDoc(doc(db, 'teamMembers', id));
+      showToast('Team member deleted');
+    } catch (error) {
+      handleFirestoreError(error, OperationType.DELETE, `teamMembers/${id}`);
+    }
+  };
+
+  const saveLegacyMember = async (member: LegacyMember) => {
+    if (!user) return;
+    try {
+      await setDoc(doc(db, 'legacyMembers', member.id), { ...member, uid: user.uid, updatedAt: new Date().toISOString() });
+      showToast('Legacy member saved');
+    } catch (error) {
+      handleFirestoreError(error, OperationType.WRITE, `legacyMembers/${member.id}`);
+    }
+  };
+
+  const deleteLegacyMember = async (id: string) => {
+    if (!user) return;
+    try {
+      await deleteDoc(doc(db, 'legacyMembers', id));
+      showToast('Legacy member deleted');
+    } catch (error) {
+      handleFirestoreError(error, OperationType.DELETE, `legacyMembers/${id}`);
+    }
+  };
+
+  const saveManagerQuote = async (quote: ManagerQuote) => {
+    if (!user) return;
+    try {
+      await setDoc(doc(db, 'managerQuotes', quote.id), { ...quote, uid: user.uid, updatedAt: new Date().toISOString() });
+      showToast('Manager quote updated');
+    } catch (error) {
+      handleFirestoreError(error, OperationType.WRITE, `managerQuotes/${quote.id}`);
+    }
+  };
+
+  const saveAchievementCard = async (card: AchievementCard) => {
+    if (!user) return;
+    try {
+      await setDoc(doc(db, 'achievementCards', card.id), { ...card, uid: user.uid, updatedAt: new Date().toISOString() });
+      showToast('Achievement card saved');
+    } catch (error) {
+      handleFirestoreError(error, OperationType.WRITE, `achievementCards/${card.id}`);
+    }
+  };
+
+  const deleteAchievementCard = async (id: string) => {
+    if (!user) return;
+    try {
+      await deleteDoc(doc(db, 'achievementCards', id));
+      showToast('Achievement card deleted');
+    } catch (error) {
+      handleFirestoreError(error, OperationType.DELETE, `achievementCards/${id}`);
+    }
+  };
+
+  const saveLandingConfig = async (config: LandingPageConfig) => {
+    if (!user) return;
+    try {
+      await setDoc(doc(db, 'settings', 'landingConfig'), { ...config, updatedAt: new Date().toISOString() });
+      showToast('Landing page configuration saved');
+    } catch (error) {
+      handleFirestoreError(error, OperationType.WRITE, 'settings/landingConfig');
+    }
+  };
+
   const updateCustomSetting = async (key: string, value: string) => {
     const currentList = customSettings[key] || [];
     if (currentList.includes(value)) return;
@@ -676,15 +845,24 @@ export function AppProvider({ children }: { children: ReactNode }) {
     try {
       const batch = writeBatch(db);
       let count = 0;
+      let skipped = 0;
       importedRuns.forEach(r => {
         if (!runs.find(x => x.id === r.id) && count < 400) {
           batch.set(doc(db, 'runs', r.id), { ...r, uid: user.uid });
           count++;
+        } else {
+          skipped++;
         }
       });
       await batch.commit();
-      showToast(`✔ Imported ${count} runs`);
+      if (count > 0) {
+        showToast(`✔ Imported ${count} runs. ${skipped > 0 ? `(${skipped} skipped)` : ''}`);
+      } else {
+        showToast(`No new runs imported. ${skipped} runs already exist.`, 'warning');
+      }
     } catch (error) {
+      console.error('Import error:', error);
+      showToast('Import failed. Check CSV format and permissions.', 'error');
       handleFirestoreError(error, OperationType.WRITE, 'batch_import');
     }
   };
@@ -693,10 +871,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
     <AppContext.Provider value={{
       user, role, isAuthReady, theme, setTheme: handleSetTheme,
       runs, sugarData, concData, dfData, extLabData, certsData, financialHistory, plantMetrics, currentView, setCurrentView,
+      teamMembers, legacyMembers, managerQuotes, achievementCards, landingConfig,
+      sidebarCollapsed, setSidebarCollapsed,
       isModalOpen, openModal, closeModal, editId, prefillLine,
       saveRun, deleteRun, toggleRunLock, saveSugarEntry, deleteSugarEntry,
       saveConcEntry, deleteConcEntry, saveDFEntry, deleteDFEntry,
-      saveExtLabEntry, deleteExtLabEntry, saveCert, deleteCert, saveFinancialHistory, deleteFinancialHistory, savePlantMetrics, savePlantConfig, toastMsg, toastType, showToast,
+      saveExtLabEntry, deleteExtLabEntry, saveCert, deleteCert, saveFinancialHistory, deleteFinancialHistory, savePlantMetrics, savePlantConfig, 
+      saveTeamMember, deleteTeamMember, saveLegacyMember, deleteLegacyMember, saveManagerQuote,
+      saveAchievementCard, deleteAchievementCard, saveLandingConfig,
+      toastMsg, toastType, showToast,
       clearAll, loadSampleData, importCSV, signIn, logOut,
       customSettings, updateCustomSetting, removeCustomSetting
     }}>

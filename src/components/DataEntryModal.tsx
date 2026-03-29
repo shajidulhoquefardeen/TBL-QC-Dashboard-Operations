@@ -5,7 +5,7 @@ import { today } from '../utils';
 import { PlantSettingsModal } from './PlantSettingsModal';
 
 export function DataEntryModal() {
-  const { isModalOpen, closeModal, editId, runs, saveRun, prefillLine, customSettings, role } = useAppContext();
+  const { isModalOpen, closeModal, editId, runs, saveRun, prefillLine, customSettings, role, showToast } = useAppContext();
 
   const [activeTab, setActiveTab] = useState(1);
   const [settingsModal, setSettingsModal] = useState<{ isOpen: boolean; category: string; label: string }>({ isOpen: false, category: '', label: '' });
@@ -94,7 +94,7 @@ export function DataEntryModal() {
   const handleSubmit = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (!isTab1Valid) {
-      alert('Please fill in all required fields in Startup Info.');
+      showToast('Please fill in all required fields in Startup Info.', 'error');
       setActiveTab(1);
       return;
     }

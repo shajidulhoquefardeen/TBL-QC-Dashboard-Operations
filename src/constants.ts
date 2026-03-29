@@ -50,6 +50,7 @@ export const CERTS = [
 ];
 
 export const PAGE: Record<string, {t: string, s: string}> = {
+  home:     {t:'QC Department',        s:'Transcom Beverages Ltd. – Chittagong Plant'},
   qc:       {t:'QC Dashboard',         s:'Overall Quality Control – Chittagong Plant'},
   yield:    {t:'Yield Dashboard',       s:'ONE TEAM ONE DREAM – Concentrate Yield Analysis'},
   lineboard:{t:'Line Board',            s:'4-Line Operations Board – Live Status'},

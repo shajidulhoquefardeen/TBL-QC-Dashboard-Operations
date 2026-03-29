@@ -15,12 +15,13 @@ import { LinePerf } from './components/LinePerf';
 import { DataEntry } from './components/DataEntry';
 import { Certs } from './components/Certs';
 import { Settings } from './components/Settings';
+import { LandingPage } from './components/LandingPage';
 import { useAppContext } from './store';
 import { DataEntryModal } from './components/DataEntryModal';
 import { ErrorBoundary } from './components/ErrorBoundary';
 
 function AppContent() {
-  const { currentView, toastMsg, user, isAuthReady, signIn } = useAppContext();
+  const { currentView, toastMsg, user, isAuthReady, signIn, sidebarCollapsed, setSidebarCollapsed } = useAppContext();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -84,11 +85,13 @@ function AppContent() {
   }
 
   return (
-    <div className="flex h-screen font-sans overflow-hidden bg-navy text-text">
+    <div className="flex h-screen font-sans overflow-hidden bg-navy text-text relative">
+      <div className={`${sidebarCollapsed ? 'hidden' : 'fixed inset-0 z-[110] bg-black/50 lg:hidden'}`} onClick={() => setSidebarCollapsed(true)}></div>
       <Sidebar />
       <div className="flex-1 flex flex-col h-full overflow-hidden">
         <Topbar />
         <main className="flex-1 overflow-y-auto relative">
+          {currentView === 'home' && <LandingPage />}
           {currentView === 'qc' && <QCDashboard />}
           {currentView === 'yield' && <YieldDashboard />}
           {currentView === 'lineboard' && <LineBoard />}

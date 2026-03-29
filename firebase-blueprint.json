@@ -76,6 +76,49 @@
         "uid": { "type": "string" }
       },
       "required": ["id", "label", "expiry", "updatedAt", "uid"]
+    },
+    "TeamMember": {
+      "title": "TeamMember",
+      "description": "A current QC team member",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "designation": { "type": "string" },
+        "photoUrl": { "type": "string" },
+        "updatedAt": { "type": "string" },
+        "uid": { "type": "string" }
+      },
+      "required": ["id", "name", "designation", "updatedAt", "uid"]
+    },
+    "LegacyMember": {
+      "title": "LegacyMember",
+      "description": "A former QC team member",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "designation": { "type": "string" },
+        "tenure": { "type": "string" },
+        "photoUrl": { "type": "string" },
+        "updatedAt": { "type": "string" },
+        "uid": { "type": "string" }
+      },
+      "required": ["id", "name", "designation", "tenure", "updatedAt", "uid"]
+    },
+    "ManagerQuote": {
+      "title": "ManagerQuote",
+      "description": "A quote from a plant or QC manager",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "quote": { "type": "string" },
+        "photoUrl": { "type": "string" },
+        "updatedAt": { "type": "string" },
+        "uid": { "type": "string" }
+      },
+      "required": ["id", "name", "quote", "updatedAt", "uid"]
     }
   },
   "firestore": {
@@ -98,6 +141,18 @@
     "/settings/plantConfig": {
       "schema": { "$ref": "#/entities/PlantConfig" },
       "description": "Stores dynamic plant configuration"
+    },
+    "/teamMembers/{memberId}": {
+      "schema": { "$ref": "#/entities/TeamMember" },
+      "description": "Stores current team members"
+    },
+    "/legacyMembers/{memberId}": {
+      "schema": { "$ref": "#/entities/LegacyMember" },
+      "description": "Stores legacy team members"
+    },
+    "/managerQuotes/{quoteId}": {
+      "schema": { "$ref": "#/entities/ManagerQuote" },
+      "description": "Stores manager quotes"
     }
   }
 }
