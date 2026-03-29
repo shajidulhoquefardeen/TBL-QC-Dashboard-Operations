@@ -102,8 +102,27 @@ export function Settings() {
               </div>
 
               <div className="bg-navy border border-border rounded-lg p-4 flex flex-col gap-3 col-span-2">
-                <div className="font-condensed font-semibold text-lg">Import CSV Data</div>
-                <div className="text-[10px] text-text-muted">Import production runs from a CSV file. The CSV must have headers matching the internal data structure (e.g., date, line, batchNo, flavour, etc.).</div>
+                <div className="flex justify-between items-start">
+                  <div>
+                    <div className="font-condensed font-semibold text-lg">Import CSV Data</div>
+                    <div className="text-[10px] text-text-muted">Import production runs from a CSV file. The CSV must have headers matching the internal data structure.</div>
+                  </div>
+                  <button 
+                    onClick={() => {
+                      const headers = "id,date,line,batchNo,flavour,sku,lineSyrupVol,pmxAmount,lineFG,pmxFG,shift,chemistStartup,chemistEndup,brixStartup,brixEndup,brixStandard,yieldPct,isLocked,isMicroDone,microDate,microResult";
+                      const sample = "run_123,2026-03-29,Line 1,B12345,Pepsi,250,1000,500,4000,2000,Day,Sajid,Fardeen,12.5,12.5,12.5,100,false,false,,";
+                      const blob = new Blob([`${headers}\n${sample}`], { type: 'text/csv' });
+                      const url = window.URL.createObjectURL(blob);
+                      const a = document.createElement('a');
+                      a.href = url;
+                      a.download = 'production_runs_template.csv';
+                      a.click();
+                    }}
+                    className="bg-accent/10 border border-accent/30 text-accent rounded px-2 py-1 text-[9px] font-bold uppercase tracking-wider hover:bg-accent hover:text-white transition-all"
+                  >
+                    📥 Download Template
+                  </button>
+                </div>
                 <div className="flex items-center gap-3 mt-auto">
                   <input type="file" accept=".csv" className="text-[10px] text-text-muted file:mr-3 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-[10px] file:font-semibold file:bg-accent/20 file:text-accent hover:file:bg-accent/30 cursor-pointer" onChange={handleImport} />
                 </div>

@@ -10,8 +10,8 @@
   --theme-text: #f8fafc;
   --theme-text-muted: #94a3b8;
   --theme-text-dim: #64748b;
-  --theme-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
-  --theme-shadow-hover: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+  --theme-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+  --theme-shadow-hover: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
 }
 
 :root.light {
@@ -23,8 +23,8 @@
   --theme-text: #0f172a;
   --theme-text-muted: #475569;
   --theme-text-dim: #94a3b8;
-  --theme-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03), 0 0 0 1px rgba(0, 0, 0, 0.02);
-  --theme-shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --theme-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.12), 0 4px 6px -2px rgba(0, 0, 0, 0.08);
+  --theme-shadow-hover: 0 20px 30px -5px rgba(0, 0, 0, 0.2), 0 10px 15px -6px rgba(0, 0, 0, 0.15);
 }
 
 @theme {
@@ -56,12 +56,14 @@ body {
 }
 
 /* Modern Drop Shadows for Cards */
-.bg-navy-card, .bg-navy, .bg-navy-light {
+.bg-navy-card {
   box-shadow: var(--theme-shadow);
-  transition: box-shadow 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+  transition: box-shadow 0.3s ease, transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
 }
+
 .bg-navy-card:hover {
   box-shadow: var(--theme-shadow-hover);
+  transform: translateY(-2px);
 }
 
 /* Custom scrollbar */

@@ -126,7 +126,7 @@ export function YieldDashboard() {
     const yStr = y > 0 ? y.toFixed(1) + '%' : '—';
     const col = y > 0 ? yieldColor(y) : 'text-text-dim';
     return (
-      <div key={c} className="bg-navy-card border border-border rounded-xl p-2 text-center h-full flex flex-col justify-center shadow-md">
+      <div key={c} className="bg-navy-card border border-border rounded-xl p-2 text-center h-full flex flex-col justify-center">
         <div className={`${y > 0 ? col : 'text-text-dim'} font-condensed font-black text-xl leading-none`}>{yStr}</div>
         <div className="text-text-muted text-[8px] mt-1 whitespace-nowrap overflow-hidden text-ellipsis">Mr. {c}</div>
       </div>
