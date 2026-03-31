@@ -1,4 +1,4 @@
-import { useState, ChangeEvent } from 'react';
+import { useState, ChangeEvent, useEffect } from 'react';
 import { useAppContext } from '../store';
 import { TeamMember, LegacyMember, ManagerQuote, AchievementCard, LandingPageConfig } from '../types';
 import { User, Trash2, Plus, Quote, Users, History, Target, Award, Image as ImageIcon } from 'lucide-react';
@@ -18,7 +18,22 @@ export function LandingPageManagement() {
   const plantManager = managerQuotes.find(q => q.id === 'plant_manager') || { id: 'plant_manager', name: '', quote: '', photoUrl: '' };
   const qcManager = managerQuotes.find(q => q.id === 'qc_manager') || { id: 'qc_manager', name: '', quote: '', photoUrl: '' };
 
-  const mission = landingConfig || { missionTitle: 'Our Mission', missionText: '', missionTextSecondary: '' };
+  const [mission, setMission] = useState<LandingPageConfig>(landingConfig || { missionTitle: 'Our Mission', missionText: '', missionTextSecondary: '' });
+
+  // Update local state when landingConfig changes (e.g. from initial load)
+  useEffect(() => {
+    if (landingConfig) {
+      setMission(landingConfig);
+    }
+  }, [landingConfig]);
+
+  const handleMissionChange = (field: keyof LandingPageConfig, value: string) => {
+    setMission(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleMissionBlur = () => {
+    saveLandingConfig(mission);
+  };
 
   const handlePhotoUpload = (e: ChangeEvent<HTMLInputElement>, callback: (base64: string) => void, maxDim = 400) => {
     const file = e.target.files?.[0];
@@ -57,34 +72,77 @@ export function LandingPageManagement() {
     }
   };
 
+  const [localTeamMembers, setLocalTeamMembers] = useState<TeamMember[]>(teamMembers);
+  const [localLegacyMembers, setLocalLegacyMembers] = useState<LegacyMember[]>(legacyMembers);
+  const [localAchievementCards, setLocalAchievementCards] = useState<AchievementCard[]>(achievementCards);
+  const [localManagerQuotes, setLocalManagerQuotes] = useState<ManagerQuote[]>(managerQuotes);
+
+  useEffect(() => {
+    setLocalTeamMembers(teamMembers);
+    setLocalLegacyMembers(legacyMembers);
+    setLocalAchievementCards(achievementCards);
+    setLocalManagerQuotes(managerQuotes);
+  }, [teamMembers, legacyMembers, achievementCards, managerQuotes]);
+
   const handleAddMember = () => {
     if (!newMember.name || !newMember.designation) return;
-    saveTeamMember({
+    const member = {
       id: crypto.randomUUID(),
       ...newMember,
       updatedAt: new Date().toISOString()
-    });
+    };
+    setLocalTeamMembers([...localTeamMembers, member]);
+    saveTeamMember(member);
     setNewMember({ name: '', designation: '', photoUrl: '' });
+  };
+
+  const handleDeleteMember = (id: string) => {
+    setLocalTeamMembers(localTeamMembers.filter(m => m.id !== id));
+    deleteTeamMember(id);
   };
 
   const handleAddLegacy = () => {
     if (!newLegacy.name || !newLegacy.designation || !newLegacy.tenure) return;
-    saveLegacyMember({
+    const legacy = {
       id: crypto.randomUUID(),
       ...newLegacy,
       updatedAt: new Date().toISOString()
-    });
+    };
+    setLocalLegacyMembers([...localLegacyMembers, legacy]);
+    saveLegacyMember(legacy);
     setNewLegacy({ name: '', designation: '', tenure: '', photoUrl: '' });
+  };
+
+  const handleDeleteLegacy = (id: string) => {
+    setLocalLegacyMembers(localLegacyMembers.filter(m => m.id !== id));
+    deleteLegacyMember(id);
   };
 
   const handleAddCard = () => {
     if (!newCard.boldText || !newCard.subText) return;
-    saveAchievementCard({
+    const card = {
       id: crypto.randomUUID(),
       ...newCard,
       updatedAt: new Date().toISOString()
-    });
+    };
+    setLocalAchievementCards([...localAchievementCards, card]);
+    saveAchievementCard(card);
     setNewCard({ boldText: '', subText: '', logoUrl: '' });
+  };
+
+  const handleDeleteCard = (id: string) => {
+    setLocalAchievementCards(localAchievementCards.filter(c => c.id !== id));
+    deleteAchievementCard(id);
+  };
+
+  const handleManagerQuoteChange = (id: string, field: keyof ManagerQuote, value: string) => {
+    const updatedQuotes = localManagerQuotes.map(q => q.id === id ? { ...q, [field]: value } : q);
+    setLocalManagerQuotes(updatedQuotes);
+  };
+
+  const handleManagerQuoteBlur = (id: string) => {
+    const quote = localManagerQuotes.find(q => q.id === id);
+    if (quote) saveManagerQuote(quote);
   };
 
   return (
@@ -141,24 +199,27 @@ export function LandingPageManagement() {
             <input 
               type="text" 
               className="finp w-full" 
-              value={mission.missionTitle} 
-              onChange={e => saveLandingConfig({ ...mission as LandingPageConfig, missionTitle: e.target.value })}
+              value={mission.missionTitle || ''} 
+              onChange={e => handleMissionChange('missionTitle', e.target.value)}
+              onBlur={handleMissionBlur}
             />
           </div>
           <div className="space-y-1">
             <label className="text-[10px] uppercase tracking-widest text-text-muted">Primary Text</label>
             <textarea 
               className="finp w-full h-24 resize-none" 
-              value={mission.missionText} 
-              onChange={e => saveLandingConfig({ ...mission as LandingPageConfig, missionText: e.target.value })}
+              value={mission.missionText || ''} 
+              onChange={e => handleMissionChange('missionText', e.target.value)}
+              onBlur={handleMissionBlur}
             />
           </div>
           <div className="space-y-1">
             <label className="text-[10px] uppercase tracking-widest text-text-muted">Secondary Text (Optional)</label>
             <textarea 
               className="finp w-full h-24 resize-none" 
-              value={mission.missionTextSecondary} 
-              onChange={e => saveLandingConfig({ ...mission as LandingPageConfig, missionTextSecondary: e.target.value })}
+              value={mission.missionTextSecondary || ''} 
+              onChange={e => handleMissionChange('missionTextSecondary', e.target.value)}
+              onBlur={handleMissionBlur}
             />
           </div>
         </div>
@@ -193,7 +254,7 @@ export function LandingPageManagement() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {achievementCards.map(card => (
+            {localAchievementCards.map(card => (
               <div key={card.id} className="flex items-center gap-4 p-4 bg-navy-mid rounded-lg border border-border group relative">
                 <div className="w-12 h-12 rounded bg-navy-card flex items-center justify-center overflow-hidden border border-border p-2">
                   {card.logoUrl ? <img src={card.logoUrl} className="w-full h-full object-contain" /> : <Award className="text-text-muted w-6 h-6 opacity-20" />}
@@ -202,7 +263,7 @@ export function LandingPageManagement() {
                   <div className="font-bold text-lg text-text leading-tight">{card.boldText}</div>
                   <div className="text-[10px] text-text-muted uppercase tracking-wider truncate">{card.subText}</div>
                 </div>
-                <button onClick={() => deleteAchievementCard(card.id)} className="p-2 text-red-400 hover:bg-red-400/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                <button onClick={() => handleDeleteCard(card.id)} className="p-2 text-red-400 hover:bg-red-400/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>
@@ -227,14 +288,16 @@ export function LandingPageManagement() {
                 type="text" 
                 placeholder="Name" 
                 className="finp w-full" 
-                value={plantManager.name} 
-                onChange={e => saveManagerQuote({ ...plantManager as ManagerQuote, name: e.target.value })}
+                value={localManagerQuotes.find(q => q.id === 'plant_manager')?.name || ''} 
+                onChange={e => handleManagerQuoteChange('plant_manager', 'name', e.target.value)}
+                onBlur={() => handleManagerQuoteBlur('plant_manager')}
               />
               <textarea 
                 placeholder="Quote" 
                 className="finp w-full h-24 resize-none" 
-                value={plantManager.quote} 
-                onChange={e => saveManagerQuote({ ...plantManager as ManagerQuote, quote: e.target.value })}
+                value={localManagerQuotes.find(q => q.id === 'plant_manager')?.quote || ''} 
+                onChange={e => handleManagerQuoteChange('plant_manager', 'quote', e.target.value)}
+                onBlur={() => handleManagerQuoteBlur('plant_manager')}
               />
               <div className="flex items-center gap-4">
                 {plantManager.photoUrl && <img src={plantManager.photoUrl} className="w-12 h-12 rounded-full object-cover border border-accent" />}
@@ -256,14 +319,16 @@ export function LandingPageManagement() {
                 type="text" 
                 placeholder="Name" 
                 className="finp w-full" 
-                value={qcManager.name} 
-                onChange={e => saveManagerQuote({ ...qcManager as ManagerQuote, name: e.target.value })}
+                value={localManagerQuotes.find(q => q.id === 'qc_manager')?.name || ''} 
+                onChange={e => handleManagerQuoteChange('qc_manager', 'name', e.target.value)}
+                onBlur={() => handleManagerQuoteBlur('qc_manager')}
               />
               <textarea 
                 placeholder="Quote" 
                 className="finp w-full h-24 resize-none" 
-                value={qcManager.quote} 
-                onChange={e => saveManagerQuote({ ...qcManager as ManagerQuote, quote: e.target.value })}
+                value={localManagerQuotes.find(q => q.id === 'qc_manager')?.quote || ''} 
+                onChange={e => handleManagerQuoteChange('qc_manager', 'quote', e.target.value)}
+                onBlur={() => handleManagerQuoteBlur('qc_manager')}
               />
               <div className="flex items-center gap-4">
                 {qcManager.photoUrl && <img src={qcManager.photoUrl} className="w-12 h-12 rounded-full object-cover border border-accent" />}
@@ -309,7 +374,7 @@ export function LandingPageManagement() {
           </div>
 
           <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {teamMembers.map(m => (
+            {localTeamMembers.map(m => (
               <div key={m.id} className="flex items-center gap-4 p-3 bg-navy-mid rounded-lg border border-border group">
                 <div className="w-12 h-12 rounded-full bg-navy-card flex items-center justify-center overflow-hidden border border-border shrink-0">
                   {m.photoUrl ? <img src={m.photoUrl} className="w-full h-full object-cover" /> : <User className="text-text-muted w-6 h-6" />}
@@ -318,7 +383,7 @@ export function LandingPageManagement() {
                   <div className="font-bold text-sm truncate">{m.name}</div>
                   <div className="text-[10px] text-text-muted uppercase tracking-wider truncate">{m.designation}</div>
                 </div>
-                <button onClick={() => deleteTeamMember(m.id)} className="p-2 text-red-400 hover:bg-red-400/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                <button onClick={() => handleDeleteMember(m.id)} className="p-2 text-red-400 hover:bg-red-400/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>
@@ -361,7 +426,7 @@ export function LandingPageManagement() {
           </div>
 
           <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {legacyMembers.map(m => (
+            {localLegacyMembers.map(m => (
               <div key={m.id} className="flex items-center gap-4 p-3 bg-navy-mid rounded-lg border border-border group">
                 <div className="w-12 h-12 rounded-full bg-navy-card flex items-center justify-center overflow-hidden border border-border shrink-0">
                   {m.photoUrl ? <img src={m.photoUrl} className="w-full h-full object-cover" /> : <User className="text-text-muted w-6 h-6" />}
@@ -371,7 +436,7 @@ export function LandingPageManagement() {
                   <div className="text-[10px] text-text-muted uppercase tracking-wider truncate">{m.designation}</div>
                   <div className="text-[9px] text-accent/70 font-mono">{m.tenure}</div>
                 </div>
-                <button onClick={() => deleteLegacyMember(m.id)} className="p-2 text-red-400 hover:bg-red-400/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                <button onClick={() => handleDeleteLegacy(m.id)} className="p-2 text-red-400 hover:bg-red-400/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>

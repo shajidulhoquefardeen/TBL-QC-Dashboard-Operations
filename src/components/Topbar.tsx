@@ -60,10 +60,46 @@ export function Topbar() {
 
     try {
       const canvas = await html2canvas(element, {
-        backgroundColor: '#0a0e17',
+        backgroundColor: theme === 'dark' ? '#0f172a' : '#f1f5f9',
         scale: 2,
         logging: false,
-        useCORS: true
+        useCORS: true,
+        onclone: (clonedDoc) => {
+          const elements = clonedDoc.getElementsByTagName('*');
+          for (let i = 0; i < elements.length; i++) {
+            const el = elements[i] as HTMLElement;
+            const style = window.getComputedStyle(el);
+            
+            // html2canvas fails on oklch/oklab/color-mix. 
+            // We force a fallback to RGB by reading the computed style which the browser has already resolved to RGB.
+            const props = ['color', 'backgroundColor', 'borderColor', 'fill', 'stroke', 'outlineColor'];
+            props.forEach(prop => {
+              const val = (style as any)[prop];
+              if (val && (val.includes('oklch') || val.includes('oklab') || val.includes('color-mix'))) {
+                (el.style as any)[prop] = val;
+              }
+            });
+
+            if (style.boxShadow.includes('oklch') || style.boxShadow.includes('oklab') || style.boxShadow.includes('color-mix')) {
+              el.style.boxShadow = style.boxShadow;
+            }
+          }
+
+          // Sanitize style tags to prevent html2canvas from choking on the raw CSS
+          const styleTags = clonedDoc.getElementsByTagName('style');
+          for (let i = 0; i < styleTags.length; i++) {
+            try {
+              if (styleTags[i].innerHTML.includes('oklch') || styleTags[i].innerHTML.includes('oklab') || styleTags[i].innerHTML.includes('color-mix')) {
+                styleTags[i].innerHTML = styleTags[i].innerHTML
+                  .replace(/oklch\([^)]+\)/g, 'rgba(0,0,0,0.1)')
+                  .replace(/oklab\([^)]+\)/g, 'rgba(0,0,0,0.1)')
+                  .replace(/color-mix\([^)]+\)/g, 'rgba(0,0,0,0.1)');
+              }
+            } catch (e) {
+              // Ignore errors if style tag is not accessible
+            }
+          }
+        }
       });
 
       if (format === 'png') {

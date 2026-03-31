@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Chart, registerables } from 'chart.js';
 import { useAppContext } from '../store';
 import { calcYield, avgYield, yieldColor } from '../utils';
-import { FLAVOUR_COLOR } from '../constants';
+import { FLAVOUR_COLOR, CHEMISTS } from '../constants';
 
 Chart.register(...registerables);
 
@@ -15,7 +15,7 @@ export function ChemistPerf() {
   });
   const [selectedChem, setSelectedChem] = useState<string | null>(null);
 
-  const allChemists = customSettings.chemists || [];
+  const allChemists = [...CHEMISTS, ...(customSettings.chemists || [])];
   const trendChartRef = useRef<HTMLCanvasElement>(null);
   const flavourChartRef = useRef<HTMLCanvasElement>(null);
 

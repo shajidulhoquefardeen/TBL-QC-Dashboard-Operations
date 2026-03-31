@@ -12,7 +12,7 @@ export function YieldDashboard() {
   const td = todayRuns(runs);
   const now = new Date();
 
-  const allChemists = customSettings.chemists || [];
+  const allChemists = [...CHEMISTS, ...(customSettings.chemists || [])];
 
   const ftdChartRef = useRef<HTMLCanvasElement>(null);
   const monthlyChartRef = useRef<HTMLCanvasElement>(null);

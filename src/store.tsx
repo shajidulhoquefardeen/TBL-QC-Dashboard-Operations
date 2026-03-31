@@ -3,7 +3,7 @@ import { Run, SyrupEntry, PlantMetrics, PlantConfig, PlantCertificate, Financial
 import { CHEMISTS, F15, LINES, FLAVOURS } from './constants';
 import { auth, db } from './firebase';
 import { onAuthStateChanged, signInAnonymously, signOut, User } from 'firebase/auth';
-import { collection, doc, setDoc, deleteDoc, onSnapshot, query, orderBy, writeBatch } from 'firebase/firestore';
+import { collection, doc, setDoc, deleteDoc, onSnapshot, query, orderBy, writeBatch, getDocs, getDoc } from 'firebase/firestore';
 import { handleFirestoreError, OperationType } from './utils/firestoreErrorHandler';
 
 interface AppState {
@@ -98,13 +98,28 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [achievementCards, setAchievementCards] = useState<AchievementCard[]>([]);
   const [landingConfig, setLandingConfig] = useState<LandingPageConfig | null>(null);
   const [notices, setNotices] = useState<Notice[]>([]);
-  const [customSettings, setCustomSettings] = useState<any>({ lines: [], flavours: [], chemists: [], skus: [], shifts: [], deviations: [], coliforms: [], microResults: [] });
+  const [customSettings, setCustomSettings] = useState<any>({
+    lines: LINES,
+    flavours: FLAVOURS,
+    chemists: CHEMISTS,
+    skus: ['250', '300', '500', '1000', '1500', '2000'],
+    shifts: ['A - Morning (07:00-15:00)', 'B - Evening (15:00-23:00)', 'C - Night (23:00-07:00)'],
+    deviations: ['None', 'DEV-01', 'DEV-02'],
+    coliforms: ['Absent', 'Present'],
+    microResults: ['Pending', 'PASS', 'FAIL']
+  });
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [currentView, setCurrentView] = useState('home');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [prefillLine, setPrefillLine] = useState<string | null>(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(window.innerWidth < 1024);
+
+  const updateCache = (key: string, value: any) => {
+    const cached = localStorage.getItem('tbl_cache');
+    const data = cached ? JSON.parse(cached) : {};
+    localStorage.setItem('tbl_cache', JSON.stringify({...data, [key]: value}));
+  };
 
   useEffect(() => {
     const handleResize = () => {
@@ -174,206 +189,110 @@ export function AppProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    const unsubRuns = onSnapshot(
-      query(collection(db, 'runs'), orderBy('date', 'desc')),
-      (snapshot) => {
-        console.log('Runs snapshot received, size:', snapshot.size);
-        const r: Run[] = [];
-        snapshot.forEach((doc) => r.push(doc.data() as Run));
-        setRuns(r);
-      },
-      (error) => {
-        console.error('Runs snapshot error:', error);
-        handleFirestoreError(error, OperationType.LIST, 'runs');
-      }
-    );
+    const unsubscribes: (() => void)[] = [];
 
-    const unsubSugar = onSnapshot(
-      query(collection(db, 'sugar'), orderBy('date', 'desc')),
-      (snapshot) => {
-        console.log('Sugar snapshot received, size:', snapshot.size);
-        const s: SyrupEntry[] = [];
-        snapshot.forEach((doc) => s.push(doc.data() as SyrupEntry));
-        setSugarData(s);
-      },
-      (error) => {
-        console.error('Sugar snapshot error:', error);
-        handleFirestoreError(error, OperationType.LIST, 'sugar');
-      }
-    );
-
-    const unsubConc = onSnapshot(
-      query(collection(db, 'conc'), orderBy('date', 'desc')),
-      (snapshot) => {
-        console.log('Conc snapshot received, size:', snapshot.size);
-        const c: SyrupEntry[] = [];
-        snapshot.forEach((doc) => c.push(doc.data() as SyrupEntry));
-        setConcData(c);
-      },
-      (error) => {
-        console.error('Conc snapshot error:', error);
-        handleFirestoreError(error, OperationType.LIST, 'conc');
-      }
-    );
-
-    const unsubDf = onSnapshot(
-      query(collection(db, 'df'), orderBy('month', 'desc')),
-      (snapshot) => {
-        console.log('DF snapshot received, size:', snapshot.size);
-        const d: any[] = [];
-        snapshot.forEach((doc) => d.push(doc.data()));
-        setDfData(d);
-      },
-      (error) => {
-        console.error('DF snapshot error:', error);
-        handleFirestoreError(error, OperationType.LIST, 'df');
-      }
-    );
-
-    const unsubExtLab = onSnapshot(
-      query(collection(db, 'extLab'), orderBy('id', 'asc')),
-      (snapshot) => {
-        const e: any[] = [];
-        snapshot.forEach((doc) => e.push(doc.data()));
-        setExtLabData(e);
-      },
-      (error) => handleFirestoreError(error, OperationType.LIST, 'extLab')
-    );
-
-    const unsubCerts = onSnapshot(
-      query(collection(db, 'certs'), orderBy('id', 'asc')),
-      (snapshot) => {
-        const c: PlantCertificate[] = [];
-        snapshot.forEach((doc) => c.push(doc.data() as PlantCertificate));
-        setCertsData(c);
-      },
-      (error) => handleFirestoreError(error, OperationType.LIST, 'certs')
-    );
-
-    const unsubFinancialHistory = onSnapshot(
-      query(collection(db, 'financialHistory'), orderBy('updatedAt', 'desc')),
-      (snapshot) => {
-        const h: FinancialHistoryEntry[] = [];
-        snapshot.forEach((doc) => h.push(doc.data() as FinancialHistoryEntry));
-        setFinancialHistory(h);
-      },
-      (error) => handleFirestoreError(error, OperationType.LIST, 'financialHistory')
-    );
-
-    const unsubPlantMetrics = onSnapshot(
-      doc(db, 'settings', 'plantMetrics'),
-      (docSnap) => {
-        if (docSnap.exists()) {
-          setPlantMetrics(docSnap.data() as PlantMetrics);
+    const subscribeToCollection = (
+      colName: string,
+      queryConstraints: any[],
+      setData: (data: any[]) => void,
+      cacheKey: string
+    ) => {
+      const q = query(collection(db, colName), ...queryConstraints);
+      const unsub = onSnapshot(q, (snap) => {
+        const data: any[] = [];
+        snap.forEach(doc => data.push({ id: doc.id, ...doc.data() }));
+        setData(data);
+        
+        // Update cache
+        const cached = localStorage.getItem('tbl_cache');
+        const cacheData = cached ? JSON.parse(cached) : {};
+        cacheData[cacheKey] = data;
+        localStorage.setItem('tbl_cache', JSON.stringify(cacheData));
+        localStorage.setItem('tbl_cache_timestamp', Date.now().toString());
+      }, (error) => {
+        console.error(`Error fetching ${colName}:`, error);
+        if (error instanceof Error && error.message.includes('Quota exceeded')) {
+          showToast(`Firebase Quota Exceeded. Showing cached data for ${colName}.`, 'error');
+        } else if (error instanceof Error && error.message.includes('Missing or insufficient permissions')) {
+          showToast(`Permission denied for ${colName}.`, 'error');
         } else {
-          setPlantMetrics(null);
+          showToast(`Error loading ${colName}. Showing cached data.`, 'error');
         }
-      },
-      (error) => handleFirestoreError(error, OperationType.GET, 'settings/plantMetrics')
-    );
+        // Fallback to cache
+        const cached = localStorage.getItem('tbl_cache');
+        if (cached) {
+          const cacheData = JSON.parse(cached);
+          if (cacheData[cacheKey]) setData(cacheData[cacheKey]);
+        }
+      });
+      unsubscribes.push(unsub);
+    };
 
-    const unsubPlantConfig = onSnapshot(
-      doc(db, 'settings', 'plantConfig'),
-      (docSnap) => {
+    const subscribeToDoc = (
+      colName: string,
+      docId: string,
+      setData: (data: any) => void,
+      cacheKey: string,
+      defaultData?: any
+    ) => {
+      const unsub = onSnapshot(doc(db, colName, docId), (docSnap) => {
         if (docSnap.exists()) {
-          setCustomSettings(docSnap.data());
+          const data = { id: docSnap.id, ...docSnap.data() };
+          setData(data);
+          
+          // Update cache
+          const cached = localStorage.getItem('tbl_cache');
+          const cacheData = cached ? JSON.parse(cached) : {};
+          cacheData[cacheKey] = data;
+          localStorage.setItem('tbl_cache', JSON.stringify(cacheData));
+        } else if (defaultData) {
+          setData(defaultData);
         } else {
-          // Initialize with defaults if it's the first time
-          const defaults: PlantConfig = {
-            lines: LINES,
-            flavours: FLAVOURS,
-            chemists: CHEMISTS,
-            skus: ['250', '300', '500', '1000', '1500', '2000'],
-            shifts: ['A - Morning (07:00-15:00)', 'B - Evening (15:00-23:00)', 'C - Night (23:00-07:00)'],
-            deviations: ['None', 'DEV-01', 'DEV-02'],
-            coliforms: ['Absent', 'Present'],
-            microResults: ['Pending', 'PASS', 'FAIL'],
-            updatedAt: new Date().toISOString()
-          };
-          savePlantConfig(defaults);
+          setData(null);
         }
-      },
-      (error) => handleFirestoreError(error, OperationType.GET, 'settings/plantConfig')
-    );
-
-    const unsubTeam = onSnapshot(
-      query(collection(db, 'teamMembers'), orderBy('updatedAt', 'desc')),
-      (snapshot) => {
-        const t: TeamMember[] = [];
-        snapshot.forEach((doc) => t.push(doc.data() as TeamMember));
-        setTeamMembers(t);
-      },
-      (error) => handleFirestoreError(error, OperationType.LIST, 'teamMembers')
-    );
-
-    const unsubLegacy = onSnapshot(
-      query(collection(db, 'legacyMembers'), orderBy('updatedAt', 'desc')),
-      (snapshot) => {
-        const l: LegacyMember[] = [];
-        snapshot.forEach((doc) => l.push(doc.data() as LegacyMember));
-        setLegacyMembers(l);
-      },
-      (error) => handleFirestoreError(error, OperationType.LIST, 'legacyMembers')
-    );
-
-    const unsubAchievementCards = onSnapshot(
-      query(collection(db, 'achievementCards'), orderBy('updatedAt', 'asc')),
-      (snapshot) => {
-        const c: AchievementCard[] = [];
-        snapshot.forEach((doc) => c.push(doc.data() as AchievementCard));
-        setAchievementCards(c);
-      },
-      (error) => handleFirestoreError(error, OperationType.LIST, 'achievementCards')
-    );
-
-    const unsubLandingConfig = onSnapshot(
-      doc(db, 'settings', 'landingConfig'),
-      (docSnap) => {
-        if (docSnap.exists()) {
-          setLandingConfig(docSnap.data() as LandingPageConfig);
-        } else {
-          setLandingConfig(null);
+      }, (error) => {
+        console.error(`Error fetching ${colName}/${docId}:`, error);
+        // Fallback to cache
+        const cached = localStorage.getItem('tbl_cache');
+        if (cached) {
+          const cacheData = JSON.parse(cached);
+          if (cacheData[cacheKey]) setData(cacheData[cacheKey]);
         }
-      },
-      (error) => handleFirestoreError(error, OperationType.GET, 'settings/landingConfig')
-    );
+      });
+      unsubscribes.push(unsub);
+    };
 
-    const unsubQuotes = onSnapshot(
-      collection(db, 'managerQuotes'),
-      (snapshot) => {
-        const q: ManagerQuote[] = [];
-        snapshot.forEach((doc) => q.push(doc.data() as ManagerQuote));
-        setManagerQuotes(q);
-      },
-      (error) => handleFirestoreError(error, OperationType.LIST, 'managerQuotes')
-    );
+    subscribeToCollection('df', [orderBy('month', 'desc')], setDfData, 'dfData');
+    subscribeToCollection('teamMembers', [orderBy('updatedAt', 'desc')], setTeamMembers, 'teamMembers');
+    subscribeToCollection('legacyMembers', [orderBy('updatedAt', 'desc')], setLegacyMembers, 'legacyMembers');
+    subscribeToCollection('managerQuotes', [], setManagerQuotes, 'managerQuotes');
+    subscribeToCollection('runs', [orderBy('date', 'desc')], setRuns, 'runs');
+    subscribeToCollection('sugar', [orderBy('date', 'desc')], setSugarData, 'sugarData');
+    subscribeToCollection('conc', [orderBy('date', 'desc')], setConcData, 'concData');
+    subscribeToCollection('extLab', [orderBy('id', 'asc')], setExtLabData, 'extLabData');
+    subscribeToCollection('certs', [orderBy('id', 'asc')], setCertsData, 'certsData');
+    subscribeToCollection('financialHistory', [orderBy('updatedAt', 'desc')], setFinancialHistory, 'financialHistory');
+    subscribeToCollection('achievementCards', [orderBy('updatedAt', 'asc')], setAchievementCards, 'achievementCards');
+    subscribeToCollection('notices', [orderBy('deploymentDate', 'desc')], setNotices, 'notices');
 
-    const unsubNotices = onSnapshot(
-      query(collection(db, 'notices'), orderBy('deploymentDate', 'desc'), orderBy('deploymentTime', 'desc')),
-      (snapshot) => {
-        const n: Notice[] = [];
-        snapshot.forEach((doc) => n.push(doc.data() as Notice));
-        setNotices(n);
-      },
-      (error) => handleFirestoreError(error, OperationType.LIST, 'notices')
-    );
+    subscribeToDoc('settings', 'plantMetrics', setPlantMetrics, 'plantMetrics');
+    subscribeToDoc('settings', 'landingConfig', setLandingConfig, 'landingConfig');
+
+    const defaults: PlantConfig = {
+      lines: LINES,
+      flavours: FLAVOURS,
+      chemists: CHEMISTS,
+      skus: ['250', '300', '500', '1000', '1500', '2000'],
+      shifts: ['A - Morning (07:00-15:00)', 'B - Evening (15:00-23:00)', 'C - Night (23:00-07:00)'],
+      deviations: ['None', 'DEV-01', 'DEV-02'],
+      coliforms: ['Absent', 'Present'],
+      microResults: ['Pending', 'PASS', 'FAIL'],
+      updatedAt: new Date().toISOString()
+    };
+    subscribeToDoc('settings', 'plantConfig', setCustomSettings, 'customSettings', defaults);
 
     return () => {
-      unsubRuns();
-      unsubSugar();
-      unsubConc();
-      unsubDf();
-      unsubExtLab();
-      unsubCerts();
-      unsubFinancialHistory();
-      unsubPlantMetrics();
-      unsubPlantConfig();
-      unsubTeam();
-      unsubLegacy();
-      unsubAchievementCards();
-      unsubLandingConfig();
-      unsubQuotes();
-      unsubNotices();
+      unsubscribes.forEach(unsub => unsub());
     };
   }, [isAuthReady, user]);
 
@@ -448,6 +367,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
       showToast('This run is locked and cannot be modified', 'error');
       return;
     }
+    setRuns(prev => {
+      const exists = prev.find(r => r.id === run.id);
+      if (exists) return prev.map(r => r.id === run.id ? run : r);
+      return [...prev, run].sort((a,b) => b.date.localeCompare(a.date));
+    });
     try {
       const runWithUid = { ...run, uid: user.uid };
       console.log('Saving to Firestore at runs/', run.id, runWithUid);
@@ -467,6 +391,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       showToast('This run is locked and cannot be deleted', 'error');
       return;
     }
+    setRuns(prev => prev.filter(r => r.id !== id));
     try {
       await deleteDoc(doc(db, 'runs', id));
       showToast('Run deleted');
@@ -479,6 +404,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (!user || role !== 'superadmin') return;
     const run = runs.find(r => r.id === id);
     if (!run) return;
+    setRuns(prev => prev.map(r => r.id === id ? { ...r, isLocked: !r.isLocked } : r));
     try {
       await setDoc(doc(db, 'runs', id), { ...run, isLocked: !run.isLocked, updatedAt: new Date().toISOString() });
       showToast(run.isLocked ? 'Run unlocked' : 'Run locked');
@@ -493,6 +419,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
       console.error('Save failed: No user authenticated');
       return;
     }
+    setSugarData(prev => {
+      const exists = prev.find(s => s.date === entry.date);
+      if (exists) return prev.map(s => s.date === entry.date ? entry : s);
+      return [...prev, entry].sort((a,b) => b.date.localeCompare(a.date));
+    });
     try {
       const entryWithUid = { ...entry, uid: user.uid };
       console.log('Saving to Firestore at sugar/', entry.date, entryWithUid);
@@ -507,6 +438,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const deleteSugarEntry = async (date: string) => {
     if (!user) return;
+    setSugarData(prev => prev.filter(s => s.date !== date));
     try {
       await deleteDoc(doc(db, 'sugar', date));
       showToast('Sugar entry deleted');
@@ -521,6 +453,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
       console.error('Save failed: No user authenticated');
       return;
     }
+    setConcData(prev => {
+      const exists = prev.find(c => c.date === entry.date);
+      if (exists) return prev.map(c => c.date === entry.date ? entry : c);
+      return [...prev, entry].sort((a,b) => b.date.localeCompare(a.date));
+    });
     try {
       const entryWithUid = { ...entry, uid: user.uid };
       console.log('Saving to Firestore at conc/', entry.date, entryWithUid);
@@ -535,6 +472,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const deleteConcEntry = async (date: string) => {
     if (!user) return;
+    setConcData(prev => prev.filter(c => c.date !== date));
     try {
       await deleteDoc(doc(db, 'conc', date));
       showToast('Concentrate entry deleted');
@@ -549,6 +487,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
       console.error('Save failed: No user authenticated');
       return;
     }
+    setDfData(prev => {
+      const exists = prev.find(d => d.month === entry.month);
+      if (exists) return prev.map(d => d.month === entry.month ? entry : d);
+      return [...prev, entry].sort((a,b) => b.month.localeCompare(a.month));
+    });
     try {
       const entryWithUid = { ...entry, uid: user.uid };
       console.log('Saving to Firestore at df/', entry.month, entryWithUid);
@@ -563,6 +506,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const deleteDFEntry = async (month: string) => {
     if (!user) return;
+    setDfData(prev => prev.filter(d => d.month !== month));
     try {
       await deleteDoc(doc(db, 'df', month));
       showToast('DF Consumption entry deleted');
@@ -577,6 +521,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
       console.error('Save failed: No user authenticated');
       return;
     }
+    setExtLabData(prev => {
+      const exists = prev.find(e => e.id === entry.id);
+      if (exists) return prev.map(e => e.id === entry.id ? entry : e);
+      return [...prev, entry];
+    });
     try {
       const entryWithUid = { ...entry, uid: user.uid };
       console.log('Saving to Firestore at extLab/', entry.id, entryWithUid);
@@ -594,6 +543,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
       showToast('Only Admin or Super Admin can manage certificates', 'error');
       return;
     }
+    setCertsData(prev => {
+      const exists = prev.find(c => c.id === cert.id);
+      if (exists) return prev.map(c => c.id === cert.id ? cert : c);
+      return [...prev, cert];
+    });
     try {
       await setDoc(doc(db, 'certs', cert.id), { ...cert, uid: user.uid, updatedAt: new Date().toISOString() });
       showToast('Certificate updated');
@@ -607,6 +561,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       showToast('Only Super Admin can remove certificates', 'error');
       return;
     }
+    setCertsData(prev => prev.filter(c => c.id !== id));
     try {
       await deleteDoc(doc(db, 'certs', id));
       showToast('Certificate removed');
@@ -617,6 +572,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const saveFinancialHistory = async (entry: FinancialHistoryEntry) => {
     if (!user) return;
+    setFinancialHistory(prev => {
+      const exists = prev.find(h => h.id === entry.id);
+      if (exists) return prev.map(h => h.id === entry.id ? entry : h);
+      return [...prev, entry].sort((a,b) => b.updatedAt.localeCompare(a.updatedAt));
+    });
     try {
       await setDoc(doc(db, 'financialHistory', entry.id), { ...entry, uid: user.uid });
     } catch (error) {
@@ -626,6 +586,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const deleteFinancialHistory = async (id: string) => {
     if (!user) return;
+    setFinancialHistory(prev => prev.filter(h => h.id !== id));
     try {
       await deleteDoc(doc(db, 'financialHistory', id));
       showToast('History entry deleted');
@@ -636,6 +597,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const deleteExtLabEntry = async (id: string) => {
     if (!user) return;
+    setExtLabData(prev => prev.filter(e => e.id !== id));
     try {
       await deleteDoc(doc(db, 'extLab', id));
       showToast('External Lab entry deleted');
@@ -650,6 +612,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       console.error('Save failed: No user authenticated');
       return;
     }
+    setPlantMetrics(metrics);
     try {
       console.log('Saving to Firestore at settings/plantMetrics', metrics);
       await setDoc(doc(db, 'settings', 'plantMetrics'), metrics);
@@ -663,6 +626,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const savePlantConfig = async (config: any) => {
     if (!user) return;
+    setCustomSettings(config);
+    updateCache('customSettings', config);
     try {
       await setDoc(doc(db, 'settings', 'plantConfig'), { ...config, updatedAt: new Date().toISOString() });
       showToast('Plant configuration updated');
@@ -673,6 +638,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const saveTeamMember = async (member: TeamMember) => {
     if (!user) return;
+    
+    // Update local state immediately
+    setTeamMembers(prev => {
+      const exists = prev.find(m => m.id === member.id);
+      if (exists) return prev.map(m => m.id === member.id ? member : m);
+      return [...prev, member];
+    });
+
+    // Update cache
+    updateCache('teamMembers', teamMembers.find(m => m.id === member.id) ? teamMembers.map(m => m.id === member.id ? member : m) : [...teamMembers, member]);
+
     try {
       await setDoc(doc(db, 'teamMembers', member.id), { ...member, uid: user.uid, updatedAt: new Date().toISOString() });
       showToast('Team member saved');
@@ -683,6 +659,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const deleteTeamMember = async (id: string) => {
     if (!user) return;
+    
+    // Update local state immediately
+    setTeamMembers(prev => prev.filter(m => m.id !== id));
+
+    // Update cache
+    updateCache('teamMembers', teamMembers.filter(m => m.id !== id));
+
     try {
       await deleteDoc(doc(db, 'teamMembers', id));
       showToast('Team member deleted');
@@ -693,6 +676,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const saveLegacyMember = async (member: LegacyMember) => {
     if (!user) return;
+    setLegacyMembers(prev => {
+      const exists = prev.find(m => m.id === member.id);
+      if (exists) return prev.map(m => m.id === member.id ? member : m);
+      return [...prev, member];
+    });
+    updateCache('legacyMembers', legacyMembers.find(m => m.id === member.id) ? legacyMembers.map(m => m.id === member.id ? member : m) : [...legacyMembers, member]);
     try {
       await setDoc(doc(db, 'legacyMembers', member.id), { ...member, uid: user.uid, updatedAt: new Date().toISOString() });
       showToast('Legacy member saved');
@@ -703,6 +692,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const deleteLegacyMember = async (id: string) => {
     if (!user) return;
+    setLegacyMembers(prev => prev.filter(m => m.id !== id));
+    updateCache('legacyMembers', legacyMembers.filter(m => m.id !== id));
     try {
       await deleteDoc(doc(db, 'legacyMembers', id));
       showToast('Legacy member deleted');
@@ -713,6 +704,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const saveManagerQuote = async (quote: ManagerQuote) => {
     if (!user) return;
+    setManagerQuotes(prev => {
+      const exists = prev.find(m => m.id === quote.id);
+      if (exists) return prev.map(m => m.id === quote.id ? quote : m);
+      return [...prev, quote];
+    });
+    updateCache('managerQuotes', managerQuotes.find(m => m.id === quote.id) ? managerQuotes.map(m => m.id === quote.id ? quote : m) : [...managerQuotes, quote]);
     try {
       await setDoc(doc(db, 'managerQuotes', quote.id), { ...quote, uid: user.uid, updatedAt: new Date().toISOString() });
       showToast('Manager quote updated');
@@ -723,6 +720,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const saveAchievementCard = async (card: AchievementCard) => {
     if (!user) return;
+    setAchievementCards(prev => {
+      const exists = prev.find(c => c.id === card.id);
+      if (exists) return prev.map(c => c.id === card.id ? card : c);
+      return [...prev, card];
+    });
+    updateCache('achievementCards', achievementCards.find(c => c.id === card.id) ? achievementCards.map(c => c.id === card.id ? card : c) : [...achievementCards, card]);
     try {
       await setDoc(doc(db, 'achievementCards', card.id), { ...card, uid: user.uid, updatedAt: new Date().toISOString() });
       showToast('Achievement card saved');
@@ -733,6 +736,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const deleteAchievementCard = async (id: string) => {
     if (!user) return;
+    setAchievementCards(prev => prev.filter(c => c.id !== id));
+    updateCache('achievementCards', achievementCards.filter(c => c.id !== id));
     try {
       await deleteDoc(doc(db, 'achievementCards', id));
       showToast('Achievement card deleted');
@@ -743,6 +748,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const saveLandingConfig = async (config: LandingPageConfig) => {
     if (!user) return;
+    setLandingConfig(config);
+    updateCache('landingConfig', config);
     try {
       await setDoc(doc(db, 'settings', 'landingConfig'), { ...config, updatedAt: new Date().toISOString() });
       showToast('Landing page configuration saved');
@@ -753,6 +760,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const saveNotice = async (notice: Notice) => {
     if (!user) return;
+    setNotices(prev => {
+      const exists = prev.find(n => n.id === notice.id);
+      if (exists) return prev.map(n => n.id === notice.id ? notice : n);
+      return [...prev, notice];
+    });
+    updateCache('notices', notices.find(n => n.id === notice.id) ? notices.map(n => n.id === notice.id ? notice : n) : [...notices, notice]);
     try {
       await setDoc(doc(db, 'notices', notice.id), { ...notice, uid: user.uid, updatedAt: new Date().toISOString() });
       showToast('Notice saved successfully');
@@ -762,14 +775,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
   };
 
   const deleteNotice = async (id: string) => {
-    console.log('Attempting to delete notice:', id);
     if (!user) return;
+    setNotices(prev => prev.filter(n => n.id !== id));
+    updateCache('notices', notices.filter(n => n.id !== id));
     try {
       await deleteDoc(doc(db, 'notices', id));
-      console.log('Notice deleted successfully');
       showToast('Notice deleted');
     } catch (error) {
-      console.error('Error deleting notice:', error);
       handleFirestoreError(error, OperationType.DELETE, `notices/${id}`);
     }
   };
@@ -798,6 +810,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       showToast('Only Super Admin can clear data', 'error');
       return;
     }
+    setRuns([]);
+    setSugarData([]);
+    setConcData([]);
     try {
       const batch = writeBatch(db);
       runs.forEach(r => batch.delete(doc(db, 'runs', r.id)));

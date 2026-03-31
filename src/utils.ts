@@ -35,10 +35,10 @@ export function getStatus(r: Partial<Run>) {
 }
 
 export function yieldColor(p: number) {
-  if(!p) return '#3a5a8a';
-  if(p>=99 && p<=102) return '#4caf50';
-  if(p>=97) return '#ffc107';
-  return '#ef5350';
+  if(!p) return 'text-text-dim';
+  if(p>=99 && p<=102) return 'text-green';
+  if(p>=97) return 'text-amber';
+  return 'text-red';
 }
 
 export function avgYield(arr: Partial<Run>[]) {
