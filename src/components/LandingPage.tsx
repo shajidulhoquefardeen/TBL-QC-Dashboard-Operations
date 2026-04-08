@@ -46,55 +46,48 @@ export function LandingPage() {
       </div>
 
       {/* About Section */}
-      <div className="max-w-6xl mx-auto px-6 py-20 grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-        <div>
-          <h2 className="font-condensed font-bold text-3xl text-text mb-6 border-l-4 border-pepsi pl-4 uppercase tracking-tight">{mission.missionTitle}</h2>
-          <p className="text-text-muted leading-relaxed mb-6 whitespace-pre-wrap">
+      <div className="max-w-7xl mx-auto px-6 py-24 flex flex-col lg:flex-row gap-16 items-start">
+        <div className="lg:w-1/3 lg:sticky lg:top-24">
+          <h2 className="font-condensed font-bold text-4xl text-text mb-8 border-l-4 border-pepsi pl-5 uppercase tracking-tighter">{mission.missionTitle}</h2>
+          <p className="text-text-muted leading-relaxed mb-6 text-sm md:text-base whitespace-pre-wrap">
             {mission.missionText}
           </p>
           {mission.missionTextSecondary && (
-            <p className="text-text-muted leading-relaxed whitespace-pre-wrap">
+            <p className="text-text-muted leading-relaxed text-sm md:text-base whitespace-pre-wrap">
               {mission.missionTextSecondary}
             </p>
           )}
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        
+        <div className="lg:w-2/3 flex flex-wrap gap-4 justify-start content-start">
           {achievementCards.length > 0 ? (
             achievementCards.map(card => (
-              <div key={card.id} className="bg-navy-card p-6 rounded-xl border border-border text-center flex flex-col items-center justify-center min-h-[160px]">
-                <div className="w-12 h-12 mb-3 flex items-center justify-center">
+              <div key={card.id} className="bg-navy-card p-6 rounded-2xl border border-border text-center flex flex-col items-center justify-center w-full sm:w-[calc(50%-8px)] xl:w-[calc(33.33%-11px)] min-h-[180px] hover:border-accent/50 transition-all hover:shadow-xl hover:shadow-accent/5">
+                <div className="w-14 h-14 mb-4 flex items-center justify-center">
                   {card.logoUrl ? (
-                    <img src={card.logoUrl} className="max-w-full max-h-full object-contain" />
+                    <img src={card.logoUrl} className="max-w-full max-h-full object-contain" referrerPolicy="no-referrer" />
                   ) : (
-                    <Award className="text-accent/20 w-8 h-8" />
+                    <Award className="text-accent/20 w-10 h-10" />
                   )}
                 </div>
-                <div className="text-text font-bold text-xl leading-tight">{card.boldText}</div>
-                <div className="text-text-dim text-[10px] uppercase tracking-wider mt-1">{card.subText}</div>
+                <div className="text-text font-bold text-xl leading-tight mb-1">{card.boldText}</div>
+                <div className="text-text-dim text-[10px] uppercase font-bold tracking-[2px]">{card.subText}</div>
               </div>
             ))
           ) : (
             <>
-              <div className="bg-navy-card p-6 rounded-xl border border-border text-center">
-                <div className="text-3xl mb-2">🏆</div>
-                <div className="text-text font-bold text-xl">950+</div>
-                <div className="text-text-dim text-[10px] uppercase tracking-wider">AIB Score</div>
-              </div>
-              <div className="bg-navy-card p-6 rounded-xl border border-border text-center">
-                <div className="text-3xl mb-2">🧪</div>
-                <div className="text-text font-bold text-xl">100%</div>
-                <div className="text-text-dim text-[10px] uppercase tracking-wider">Compliance</div>
-              </div>
-              <div className="bg-navy-card p-6 rounded-xl border border-border text-center">
-                <div className="text-3xl mb-2">🛡️</div>
-                <div className="text-text font-bold text-xl">FSSC</div>
-                <div className="text-text-dim text-[10px] uppercase tracking-wider">Certified</div>
-              </div>
-              <div className="bg-navy-card p-6 rounded-xl border border-border text-center">
-                <div className="text-3xl mb-2">✨</div>
-                <div className="text-text font-bold text-xl">Zero</div>
-                <div className="text-text-dim text-[10px] uppercase tracking-wider">Defects</div>
-              </div>
+              {[
+                { icon: '🏆', val: '950+', sub: 'AIB Score' },
+                { icon: '🧪', val: '100%', sub: 'Compliance' },
+                { icon: '🛡️', val: 'FSSC', sub: 'Certified' },
+                { icon: '✨', val: 'Zero', sub: 'Defects' }
+              ].map((item, i) => (
+                <div key={i} className="bg-navy-card p-6 rounded-2xl border border-border text-center w-full sm:w-[calc(50%-8px)] xl:w-[calc(33.33%-11px)] min-h-[180px] hover:border-accent/50 transition-all hover:shadow-xl hover:shadow-accent/5">
+                  <div className="text-4xl mb-4">{item.icon}</div>
+                  <div className="text-text font-bold text-2xl mb-1">{item.val}</div>
+                  <div className="text-text-dim text-[10px] uppercase font-bold tracking-[2px]">{item.sub}</div>
+                </div>
+              ))}
             </>
           )}
         </div>
