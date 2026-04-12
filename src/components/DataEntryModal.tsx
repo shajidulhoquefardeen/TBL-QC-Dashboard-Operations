@@ -133,14 +133,14 @@ export function DataEntryModal() {
     closeModal();
   };
 
-  const allLines = customSettings.lines || [];
-  const allFlavours = customSettings.flavours || [];
-  const allChemists = customSettings.chemists || [];
-  const allSkus = customSettings.skus || [];
-  const allShifts = customSettings.shifts || [];
-  const allColiforms = customSettings.coliforms || [];
-  const allMicroResults = customSettings.microResults || [];
-  const allDeviations = customSettings.deviations || [];
+  const allLines = customSettings?.lines?.length ? customSettings.lines : ['Line 1', 'Line 2', 'Line 3', 'Line 4'];
+  const allFlavours = customSettings?.flavours?.length ? customSettings.flavours : ['Pepsi', '7UP EF', '7UP Regular', 'Dew', 'Mirinda', 'Sting'];
+  const allChemists = customSettings?.chemists?.length ? customSettings.chemists : ['Shahria', 'Habib', 'Soman', 'Rupu', 'Nabil', 'Futonto', 'Rubel', 'Arif', 'Maidul', 'NC1'];
+  const allSkus = customSettings?.skus?.length ? customSettings.skus : ['250', '300', '500', '1000', '1500', '2000'];
+  const allShifts = customSettings?.shifts?.length ? customSettings.shifts : ['A - Morning (07:00-15:00)', 'B - Evening (15:00-23:00)', 'C - Night (23:00-07:00)'];
+  const allColiforms = customSettings?.coliforms?.length ? customSettings.coliforms : ['Absent', 'Present'];
+  const allMicroResults = customSettings?.microResults?.length ? customSettings.microResults : ['Pending', 'PASS', 'FAIL'];
+  const allDeviations = customSettings?.deviations?.length ? customSettings.deviations : ['None', 'DEV-01', 'DEV-02'];
 
   const pmxVol = (Number(formData.pmxAmount) || 0) * 19;
   const totalSyrup = (Number(formData.lineSyrupVol) || 0) + pmxVol;
