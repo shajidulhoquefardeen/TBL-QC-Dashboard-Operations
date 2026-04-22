@@ -15,7 +15,7 @@ export function ChemistPerf() {
   });
   const [selectedChem, setSelectedChem] = useState<string | null>(null);
 
-  const allChemists = [...CHEMISTS, ...(customSettings.chemists || [])];
+  const allChemists = Array.from(new Set([...CHEMISTS, ...(customSettings.chemists || [])]));
   const trendChartRef = useRef<HTMLCanvasElement>(null);
   const flavourChartRef = useRef<HTMLCanvasElement>(null);
 

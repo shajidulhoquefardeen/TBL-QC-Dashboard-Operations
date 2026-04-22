@@ -14,7 +14,7 @@ export function LinePerf() {
   });
   const [selectedLine, setSelectedLine] = useState<string | null>(null);
 
-  const allLines = [...LINES, ...(customSettings.lines || [])];
+  const allLines = Array.from(new Set([...LINES, ...(customSettings.lines || [])]));
   const trendChartRef = useRef<HTMLCanvasElement>(null);
   const pieChartRef = useRef<HTMLCanvasElement>(null);
 
